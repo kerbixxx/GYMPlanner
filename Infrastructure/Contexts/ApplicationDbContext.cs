@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.Metrics;
 
-namespace GymPlanner.Domain.Contexts
+namespace GymPlanner.Infrastructure.Contexts
 {
     public class ApplicationDbContext : DbContext
     {

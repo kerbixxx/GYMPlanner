@@ -1,4 +1,4 @@
-﻿using GymPlanner.Domain.Contexts;
+﻿using GymPlanner.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

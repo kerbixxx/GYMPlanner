@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace GymPlanner.Domain.Migrations
+namespace GymPlanner.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class Initialize : Migration

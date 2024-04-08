@@ -1,5 +1,5 @@
 ﻿using GymPlanner.Application.Interfaces.Repositories;
-using GymPlanner.Domain.Contexts;
+using GymPlanner.Infrastructure.Contexts;
 using GymPlanner.Domain.Entities.Plan;
 using Microsoft.EntityFrameworkCore;
 using System;

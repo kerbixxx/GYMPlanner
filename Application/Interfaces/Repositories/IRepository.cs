@@ -1,6 +1,4 @@
-﻿using Microsoft.Identity.Client;
-
-namespace GymPlanner.Application.Interfaces.Repositories
+﻿namespace GymPlanner.Application.Interfaces.Repositories
 {
     public interface IRepository<T> where T : class
     {
