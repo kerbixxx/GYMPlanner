@@ -2,19 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.Metrics;
 
 namespace GymPlanner.Domain.Contexts
 {
-    public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
-    {
-        public ApplicationDbContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseSqlServer();
-
-            return new ApplicationDbContext(optionsBuilder.Options);
-        }
-    }
     public class ApplicationDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
@@ -27,6 +18,8 @@ namespace GymPlanner.Domain.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=gym;Trusted_Connection=True;Encrypt=False;");
+
             base.OnConfiguring(optionsBuilder);
         }
 
@@ -81,6 +74,14 @@ namespace GymPlanner.Domain.Contexts
             modelBuilder.Entity<PlanExcersiseFrequency>()
                 .Property(pef => pef.Description)
                 .HasMaxLength(60);
+
+            User user = new User()
+            {
+                Id = 1,
+                FirstName = "Alex",
+                LastName = "Xela"
+            };
+            modelBuilder.Entity<User>().HasData(user);
         }
     }
 }

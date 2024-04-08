@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GymPlanner.Domain.Contexts;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace GymPlanner.WebUI.Controllers
