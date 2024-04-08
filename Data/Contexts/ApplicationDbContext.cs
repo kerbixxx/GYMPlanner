@@ -1,9 +1,20 @@
 ﻿using Data.Entities.Plan;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Options;
 
 namespace Data.Contexts
 {
+    public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
+    {
+        public ApplicationDbContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            optionsBuilder.UseSqlServer();
+
+            return new ApplicationDbContext(optionsBuilder.Options);
+        }
+    }
     public class ApplicationDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
