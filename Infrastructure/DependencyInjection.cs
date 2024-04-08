@@ -1,4 +1,4 @@
-﻿namespace Infrastructure
+﻿namespace GymPlanner.Infrastructure
 {
     public class DependencyInjection
     {

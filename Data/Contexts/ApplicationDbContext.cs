@@ -1,9 +1,9 @@
-﻿using Data.Entities.Plan;
+﻿using GymPlanner.Domain.Entities.Plan;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Options;
 
-namespace Data.Contexts
+namespace GymPlanner.Domain.Contexts
 {
     public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
     {

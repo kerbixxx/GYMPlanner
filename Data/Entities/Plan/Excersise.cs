@@ -1,4 +1,4 @@
-﻿namespace Data.Entities.Plan
+﻿namespace GymPlanner.Domain.Entities.Plan
 {
     public class Excersise : BaseEntity
     {

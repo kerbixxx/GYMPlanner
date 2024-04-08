@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace Project.Controllers
+namespace GymPlanner.WebUI.Controllers
 {
     public class HomeController : Controller
     {

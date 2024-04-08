@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Data.Entities
+namespace GymPlanner.Domain.Entities
 {
     public abstract class BaseEntity
     {

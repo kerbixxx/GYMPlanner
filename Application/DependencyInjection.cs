@@ -1,4 +1,4 @@
-﻿namespace Application
+﻿namespace GymPlanner.Application
 {
     public class DependencyInjection
     {
