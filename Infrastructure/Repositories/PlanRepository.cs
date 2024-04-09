@@ -20,7 +20,11 @@ namespace GymPlanner.Infrastructure.Repositories
 
         public override Plan Get(int id)
         {
-            return _db.Plans.Include(p => p.planExcersiseFrequencies).FirstOrDefault(p => p.Id == id);
+            return _db.Plans.Include(p => p.planExcersiseFrequencies)
+                    .ThenInclude(p=>p.Frequency)
+                .Include(p=>p.planExcersiseFrequencies)
+                    .ThenInclude(p=>p.Excersise).
+                FirstOrDefault(p => p.Id == id);
         }
     }
 }

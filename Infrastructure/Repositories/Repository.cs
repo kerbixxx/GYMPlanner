@@ -8,6 +8,12 @@ namespace GymPlanner.Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _db;
         DbSet<T> _dbSet;
+
+        public void Add(T entity)
+        {
+            _dbSet.Add(entity);
+        }
+
         public virtual T Get(int id)
         {
             return _dbSet.Find(id);
@@ -16,6 +22,21 @@ namespace GymPlanner.Infrastructure.Repositories
         public List<T> GetAll()
         {
             return _dbSet.ToList();
+        }
+
+        public void Remove(T entity)
+        {
+            _dbSet.Remove(entity);
+        }
+
+        public void Update(T entity)
+        {
+            _dbSet.Update(entity);
+        }
+
+        public void Save()
+        {
+            _db.SaveChanges();
         }
     }
 }

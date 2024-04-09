@@ -103,6 +103,11 @@ namespace GymPlanner.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "FirstName", "LastName" },
+                values: new object[] { 1, "Alex", "Xela" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_PlanExcersiseFrequencys_ExcersiseId",
                 table: "PlanExcersiseFrequencys",
