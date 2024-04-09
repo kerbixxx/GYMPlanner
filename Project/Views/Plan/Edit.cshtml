@@ -34,7 +34,11 @@
                             <td>Упражнения/Дни</td>
                             @for (int i = 0; i < Model.planExcersiseFrequencies.Count; i++)
                             {
-                                <td><input asp-for="planExcersiseFrequencies[i].Frequency.Name" /></td>
+                                <input asp-for="@Model.planExcersiseFrequencies[i].FrequencyId" hidden>
+                                <input asp-for="@Model.planExcersiseFrequencies[i].Frequency.Id" hidden>
+                                <input asp-for="@Model.planExcersiseFrequencies[i].Id" hidden>
+                                <input asp-for="@Model.planExcersiseFrequencies[i].PlanId" hidden>
+                                <td><input asp-for="@Model.planExcersiseFrequencies[i].Frequency.Name" /></td>
                             }
                         </tr>
                     </thead>
@@ -42,10 +46,14 @@
                         @for (int i = 0; i < Model.planExcersiseFrequencies.Count; i++)
                         {
                             <tr>
-                                <td><input asp-for="planExcersiseFrequencies[i].Excersise.Name" /></td>
+                                <td><input asp-for="@Model.planExcersiseFrequencies[i].Excersise.Name" /></td>
+                                <input asp-for="@Model.planExcersiseFrequencies[i].Excersise.Id" hidden>
+                                <input asp-for="@Model.planExcersiseFrequencies[i].ExcersiseId" hidden>
+                                <input asp-for="@Model.planExcersiseFrequencies[i].Id" hidden>
+                                <input asp-for="@Model.planExcersiseFrequencies[i].PlanId" hidden>
                                 @for (int j = 0; j < Model.planExcersiseFrequencies.Count; j++)
                                 {
-                                    <td><input asp-for="planExcersiseFrequencies[j].Description" /></td>
+                                    <td><input asp-for="@Model.planExcersiseFrequencies[j].Description" /></td>
                                 }
                             </tr>
                         }
@@ -65,25 +73,3 @@
         </div>
     </div>
 </form>
-@section Scripts{       
-    <script>
-
-    document.querySelector('form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Предотвращаем стандартное поведение формы
-
-    var formData = new FormData(this); // Собираем данные формы
-
-    fetch(this.action, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Обработка ответа сервера
-    })
-    .catch(error => {
-        console.error('Ошибка:', error);
-    });
-});
-    </script>
-}
