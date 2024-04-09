@@ -1,0 +1,89 @@
+﻿@using GymPlanner.Domain.Entities.Plan;
+@model Plan
+
+<form method="post" asp-action="Edit">
+    <div class="border b3">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row pt-4">
+            <div class="col-6">
+                <h2 class="p1-3">Редактирование плана</h2>
+            </div>
+            <div class="col-6 text-right">
+                <a asp-action="Index" class="btn btn-primary w-50">Назад</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-8">
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Name"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br /><br />
+        <div class="row">
+            <div class="col-16">
+                <table class="table table-bordered border-primary" style="width:100%">
+                    <thead>
+                        <tr>
+                            <td>Упражнения/Дни</td>
+                            @for (int i = 0; i < Model.planExcersiseFrequencies.Count; i++)
+                            {
+                                <td><input asp-for="planExcersiseFrequencies[i].Frequency.Name" /></td>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.planExcersiseFrequencies.Count; i++)
+                        {
+                            <tr>
+                                <td><input asp-for="planExcersiseFrequencies[i].Excersise.Name" /></td>
+                                @for (int j = 0; j < Model.planExcersiseFrequencies.Count; j++)
+                                {
+                                    <td><input asp-for="planExcersiseFrequencies[j].Description" /></td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="form-group row">
+                    <div class="col-8 offset-4 row">
+                        <div class="col">
+                            <input type="submit" class="btn btn-info w-100" value="Обновить" />
+                        </div>
+                        <div class="col">
+                            <a asp-action="Index" class="btn btn-success w-100">Назад</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@section Scripts{       
+    <script>
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Предотвращаем стандартное поведение формы
+
+    var formData = new FormData(this); // Собираем данные формы
+
+    fetch(this.action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Обработка ответа сервера
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+    });
+});
+    </script>
+}

@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace GymPlanner.Application.Interfaces.Repositories
 {
-    public interface IPlanRepository : IRepository<Plan>
+    public interface IPlanExcersiseFrequencyRepository : IRepository<PlanExcersiseFrequency>
     {
-        Task<List<Plan>> GetAll();
     }
 }

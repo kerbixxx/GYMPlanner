@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=gym;Trusted_Connection=True;Encrypt=False;");
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLExpress"));
 });
 builder.Services.AddRepositories();
 

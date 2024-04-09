@@ -8,6 +8,11 @@ namespace GymPlanner.Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _db;
         DbSet<T> _dbSet;
+        public Repository(ApplicationDbContext db)
+        {
+            _db = db;
+            this._dbSet = _db.Set<T>();
+        }
 
         public async Task Add(T entity)
         {
@@ -17,11 +22,6 @@ namespace GymPlanner.Infrastructure.Repositories
         public async virtual Task<T> Get(int id)
         {
             return await _dbSet.FindAsync(id);
-        }
-
-        public async Task<List<T>> GetAll()
-        {
-            return await _dbSet.ToListAsync();
         }
 
         public void Remove(T entity)

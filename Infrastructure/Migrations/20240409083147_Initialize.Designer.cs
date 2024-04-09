@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymPlanner.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240409041741_Initialize")]
+    [Migration("20240409083147_Initialize")]
     partial class Initialize
     {
         /// <inheritdoc />
@@ -94,15 +94,18 @@ namespace GymPlanner.Infrastructure.Migrations
                     b.Property<int>("ExcersiseId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(60)
                         .HasColumnType("nvarchar(60)");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("PlanId", "FrequencyId", "ExcersiseId");
+                    b.HasKey("PlanId", "FrequencyId", "ExcersiseId", "Id");
 
                     b.HasIndex("ExcersiseId");
 

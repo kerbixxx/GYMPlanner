@@ -14,19 +14,14 @@ namespace GymPlanner.Infrastructure.Contexts
         public DbSet<Frequency> Frequencies { get; set; }
         public DbSet<PlanExcersiseFrequency> PlanExcersiseFrequencys { get;set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=gym;Trusted_Connection=True;Encrypt=False;");
-
-            base.OnConfiguring(optionsBuilder);
-        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<PlanExcersiseFrequency>()
-                .HasKey(k => new { k.PlanId, k.FrequencyId, k.ExcersiseId });
+                .HasKey(k => new { k.PlanId, k.FrequencyId, k.ExcersiseId, k.Id });
 
             modelBuilder.Entity<User>()
                 .HasKey(k => k.Id);
@@ -72,6 +67,10 @@ namespace GymPlanner.Infrastructure.Contexts
             modelBuilder.Entity<PlanExcersiseFrequency>()
                 .Property(pef => pef.Description)
                 .HasMaxLength(60);
+
+            modelBuilder.Entity<PlanExcersiseFrequency>()
+                .Property(pef => pef.Id)
+                .ValueGeneratedOnAdd();
 
             User user = new User()
             {

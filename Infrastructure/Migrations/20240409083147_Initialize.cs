@@ -74,15 +74,16 @@ namespace GymPlanner.Infrastructure.Migrations
                 name: "PlanExcersiseFrequencys",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     PlanId = table.Column<int>(type: "int", nullable: false),
                     FrequencyId = table.Column<int>(type: "int", nullable: false),
                     ExcersiseId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PlanExcersiseFrequencys", x => new { x.PlanId, x.FrequencyId, x.ExcersiseId });
+                    table.PrimaryKey("PK_PlanExcersiseFrequencys", x => new { x.PlanId, x.FrequencyId, x.ExcersiseId, x.Id });
                     table.ForeignKey(
                         name: "FK_PlanExcersiseFrequencys_Excersises_ExcersiseId",
                         column: x => x.ExcersiseId,

@@ -1,0 +1,47 @@
+﻿@using GymPlanner.Domain.Entities.Plan;
+@model Plan
+
+<div class="border p3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="p1-3">@Model.Name</h2>
+        </div>
+        <div class="col-6 text-right">
+            <a asp-action="Index" class="btn btn-primary w-50">Назад</a>
+        </div>
+    </div>
+    @if (Model.planExcersiseFrequencies.Count > 0)
+    {
+        <div class="row">
+            <div class="col-16">
+                <table class="table table-bordered border-primary" style="width:100%">
+                    <thead>
+                        <tr>
+                            <td>Упражнения/Дни</td>
+                            @for (int i = 0; i < Model.planExcersiseFrequencies.Count; i++)
+                            {
+                                <td>@Model.planExcersiseFrequencies[i].Frequency.Name</td>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.planExcersiseFrequencies.Count; i++)
+                        {
+                            <tr>
+                                <td>@Model.planExcersiseFrequencies[i].Excersise.Name</td>
+                                @for (int j = 0; j < Model.planExcersiseFrequencies.Count; j++)
+                                {
+                                    <td>@Model.planExcersiseFrequencies[j].Description</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>План не заполнен</p>
+    }
+</div>
