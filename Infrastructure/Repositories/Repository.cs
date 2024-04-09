@@ -9,19 +9,19 @@ namespace GymPlanner.Infrastructure.Repositories
         private readonly ApplicationDbContext _db;
         DbSet<T> _dbSet;
 
-        public void Add(T entity)
+        public async Task Add(T entity)
         {
-            _dbSet.Add(entity);
+            await _dbSet.AddAsync(entity);
         }
 
-        public virtual T Get(int id)
+        public async virtual Task<T> Get(int id)
         {
-            return _dbSet.Find(id);
+            return await _dbSet.FindAsync(id);
         }
 
-        public List<T> GetAll()
+        public async Task<List<T>> GetAll()
         {
-            return _dbSet.ToList();
+            return await _dbSet.ToListAsync();
         }
 
         public void Remove(T entity)
@@ -34,9 +34,9 @@ namespace GymPlanner.Infrastructure.Repositories
             _dbSet.Update(entity);
         }
 
-        public void Save()
+        public async Task Save()
         {
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
     }
 }

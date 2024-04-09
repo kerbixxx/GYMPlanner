@@ -14,9 +14,6 @@ namespace GymPlanner.Infrastructure.Contexts
         public DbSet<Frequency> Frequencies { get; set; }
         public DbSet<PlanExcersiseFrequency> PlanExcersiseFrequencys { get;set; }
 
-        public ApplicationDbContext() { } //Для вызова контекста в program.cs
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=gym;Trusted_Connection=True;Encrypt=False;");
