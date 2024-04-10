@@ -1,10 +1,6 @@
 ﻿@using GymPlanner.Domain.Entities.Plans;
 @model Plan
-@{
-    var frequencies = Model.planExcersiseFrequencies.Select(p => p.Frequency).ToList();
-    var excersises = Model.planExcersiseFrequencies.Select(p => p.Excersise).ToList();
-    List<PlanExcersiseFrequency> pefList = new();
-}
+
 <form method="post" asp-action="Edit">
     <input asp-for="UserId" hidden />
     <div class="border b3">
@@ -37,23 +33,26 @@
                     <thead>
                         <tr>
                             <td>Упражнения/Дни</td>
-                            @for (int i = 0; i<frequencies.Count(); i++)
-                            {
-                                <input asp-for="@frequencies[i].Id" hidden>
-                                <td><input asp-for="@frequencies[i].Name" /></td>
+                            @for (int i = 0; i < Model.planExcersiseFrequencies.Select(p => p.Frequency).Count(); i++)
+                                {
+                                <input asp-for="@Model.planExcersiseFrequencies[i].Frequency.Id" hidden>
+                                <td><input asp-for="@Model.planExcersiseFrequencies[i].Frequency.Name" /></td>
                             }
                         </tr>
                     </thead>
                     <tbody>
-                        @for (int i = 0; i < excersises.Count(); i++)
+                        @for (int i = 0; i < Model.planExcersiseFrequencies.Select(p => p.Excersise).Count(); i++)
                         {
                             <tr>
-                                <td><input asp-for="@excersises[i].Name" /></td>
-                                <input asp-for="@excersises[i].Id" hidden />
-                                @for (int j = 0; j < frequencies.Count(); j++)
+                                <td><input asp-for="@Model.planExcersiseFrequencies[i].Excersise.Name" /></td>
+                                <input asp-for="@Model.planExcersiseFrequencies[i].Excersise.Id" hidden />
+                                @for (int j = 0; j < Model.planExcersiseFrequencies.Select(p => p.Frequency).Count(); j++)
                                 {
-                                    var obj = pefList.FirstOrDefault(pef => pef.Frequency == frequencies[i] && pef.Excersise == excersises[j]);
-                                    <td><input asp-for="@obj.Description" /></td>
+                                    var obj = Model.planExcersiseFrequencies.Select(p => p.Frequency).Count();
+                                    var index = j + (i * (Model.planExcersiseFrequencies.Select(p => p.Excersise).Count()));
+                                    <input asp-for="@Model.planExcersiseFrequencies[index].ExcersiseId" hidden/>
+                                    <input asp-for="@Model.planExcersiseFrequencies[index].FrequencyId" hidden/>
+                                    <td><input asp-for="@Model.planExcersiseFrequencies[index].Description" value="@Model.planExcersiseFrequencies.FirstOrDefault(pef=>pef.Frequency==Model.planExcersiseFrequencies[j].Frequency&&pef.Excersise==Model.planExcersiseFrequencies[i].Excersise).Description" /></td>
                                 }
                             </tr>
                         }
@@ -94,11 +93,11 @@
             addRowButton.addEventListener('click', function () {
                 var newRow = table.insertRow(-1);
                 var newCell = newRow.insertCell(0);
-                newCell.innerHTML = '<input placeholder="Упражнение" asp-for="excersises[' + rowCount + '].Name" />';
+                newCell.innerHTML = '<input placeholder="Упражнение" name="planExcersiseFrequencies[' + (rowCount - 1) + '].Excersise.Name" />';
 
                 for (var i = 1; i < columnCount; i++) {
                     var newCell = newRow.insertCell(i);
-                    newCell.innerHTML = '<input type="text" placeholder="Описание" name="planExcersiseFrequencies[' + (rowCount - 1) + '].Description" />';
+                    newCell.innerHTML = '<input type="text" placeholder="Описание" name="planExcersiseFrequencies[' + ((i-1) + ((rowCount - 1) * (columnCount - 1))) + '].Description" />';
                 }
 
                 rowCount++;
@@ -108,12 +107,12 @@
                 // Добавление новой ячейки в заголовок таблицы
                 var headerRow = table.rows[0];
                 var newHeaderCell = headerRow.insertCell(-1);
-                newHeaderCell.innerHTML = '<input type="text" placeholder="Частота" name="frequencies[' + columnCount + '].Name" />';
+                newHeaderCell.innerHTML = '<input type="text" placeholder="Частота" name="planExcersiseFrequencies[' + (columnCount - 1) + '].Frequency.Name" />';
 
                 // Добавление ячейки с input для каждой строки в таблице
                 for (var i = 1; i < rowCount; i++) {
                     var newCell = table.rows[i].insertCell(-1);
-                    newCell.innerHTML = '<input type="text" placeholder="Описание" name="planExcersiseFrequencies[' + (i - 1) + '].Description" />';
+                    newCell.innerHTML = '<input type="text" placeholder="Описание колонк" name="planExcersiseFrequencies[' + ((i-1) + ((rowCount-1) * (columnCount-1))) + '].Description" /><input name="planExcersiseFrequencies[' + ((i - 1) + ((rowCount - 1) * (columnCount - 1))) + '].Frequency" hidden/><input name="planExcersiseFrequencies[' + ((i - 1) + ((rowCount - 1) * (columnCount - 1))) + '].Excersise" hidden/><input name="planExcersiseFrequencies[' + ((i - 1) + ((rowCount - 1) * (columnCount - 1))) + '].Plan" hidden/>';
                 }
 
                 columnCount++;
@@ -121,5 +120,4 @@
 
         });
     </script>
-
 }
