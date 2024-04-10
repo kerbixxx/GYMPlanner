@@ -1,4 +1,6 @@
-﻿namespace GymPlanner.Domain.Entities.Plan
+﻿using GymPlanner.Domain.Entities.Identity;
+
+namespace GymPlanner.Domain.Entities.Plans
 {
     public class Plan : BaseEntity
     {

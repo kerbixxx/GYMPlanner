@@ -1,4 +1,4 @@
-﻿using GymPlanner.Domain.Entities.Plan;
+﻿using GymPlanner.Domain.Entities.Plans;
 using System;
 using System.Collections.Generic;
 using System.Linq;

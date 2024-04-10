@@ -1,10 +1,12 @@
-using GymPlanner.Domain.Entities.Plan;
 using GymPlanner.Infrastructure.Contexts;
 using GymPlanner.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using GymPlanner.Infrastructure;
 using GymPlanner.Application.Interfaces.Repositories;
+using Microsoft.AspNetCore.Identity;
+using GymPlanner.Domain.Entities.Identity;
+using GymPlanner.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +16,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLExpress"));
 });
+
+builder.Services.AddIdentity<User, DefaultRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
 builder.Services.AddRepositories();
+builder.Services.AddApplication();
 
 var app = builder.Build();
 
@@ -31,6 +39,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

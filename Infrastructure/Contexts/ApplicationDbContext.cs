@@ -1,4 +1,7 @@
-﻿using GymPlanner.Domain.Entities.Plan;
+﻿using GymPlanner.Domain.Entities.Identity;
+using GymPlanner.Domain.Entities.Plans;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Options;
@@ -6,7 +9,7 @@ using System.Diagnostics.Metrics;
 
 namespace GymPlanner.Infrastructure.Contexts
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Plan> Plans { get; set; }
@@ -14,7 +17,7 @@ namespace GymPlanner.Infrastructure.Contexts
         public DbSet<Frequency> Frequencies { get; set; }
         public DbSet<PlanExcersiseFrequency> PlanExcersiseFrequencys { get;set; }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+        public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,13 +30,8 @@ namespace GymPlanner.Infrastructure.Contexts
                 .HasKey(k => k.Id);
 
             modelBuilder.Entity<User>()
-                .Property(u => u.FirstName)
-                .HasMaxLength(50)
-                .IsRequired();
-
-            modelBuilder.Entity<User>()
-                .Property(u => u.LastName)
-                .HasMaxLength(50)
+                .Property(u => u.DisplayName)
+                .HasMaxLength(70)
                 .IsRequired();
 
             modelBuilder.Entity<Plan>()
@@ -72,13 +70,15 @@ namespace GymPlanner.Infrastructure.Contexts
                 .Property(pef => pef.Id)
                 .ValueGeneratedOnAdd();
 
-            User user = new User()
+            var adminUser = new User
             {
-                Id = 1,
-                FirstName = "Alex",
-                LastName = "Xela"
+                UserName = "admin",
+                Email = "admin@example.com",
+                DisplayName="admin",
+                PasswordHash = new PasswordHasher<User>().HashPassword(null, "Admin123#")
             };
-            modelBuilder.Entity<User>().HasData(user);
+
+            modelBuilder.Entity<User>().HasData(adminUser);
         }
     }
 }

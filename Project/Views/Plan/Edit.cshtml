@@ -1,7 +1,12 @@
-﻿@using GymPlanner.Domain.Entities.Plan;
+﻿@using GymPlanner.Domain.Entities.Plans;
 @model Plan
-
+@{
+    var frequencies = Model.planExcersiseFrequencies.Select(p => p.Frequency).ToList();
+    var excersises = Model.planExcersiseFrequencies.Select(p => p.Excersise).ToList();
+    List<PlanExcersiseFrequency> pefList = new();
+}
 <form method="post" asp-action="Edit">
+    <input asp-for="UserId" hidden />
     <div class="border b3">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="row pt-4">
@@ -32,28 +37,23 @@
                     <thead>
                         <tr>
                             <td>Упражнения/Дни</td>
-                            @for (int i = 0; i < Model.planExcersiseFrequencies.Select(p=>p.Frequency).Count(); i++)
+                            @for (int i = 0; i<frequencies.Count(); i++)
                             {
-                                <input asp-for="@Model.planExcersiseFrequencies[i].Frequency.Id" hidden>
-                                <td><input asp-for="@Model.planExcersiseFrequencies[i].Frequency.Name" /></td>
+                                <input asp-for="@frequencies[i].Id" hidden>
+                                <td><input asp-for="@frequencies[i].Name" /></td>
                             }
                         </tr>
                     </thead>
                     <tbody>
-                        @for (int i = 0; i < Model.planExcersiseFrequencies.Select(p=>p.Excersise).Count(); i++)
+                        @for (int i = 0; i < excersises.Count(); i++)
                         {
                             <tr>
-                                <td><input asp-for="@Model.planExcersiseFrequencies[i].Excersise.Name" /></td>
-                                <input asp-for="@Model.planExcersiseFrequencies[i].Excersise.Id" hidden/>
-                                @for (int j = 0; j < Model.planExcersiseFrequencies.Select(p=>p.Frequency).Count(); j++)
+                                <td><input asp-for="@excersises[i].Name" /></td>
+                                <input asp-for="@excersises[i].Id" hidden />
+                                @for (int j = 0; j < frequencies.Count(); j++)
                                 {
-                                    <input asp-for="@Model.planExcersiseFrequencies[j].Frequency" hidden/>
-                                    <input asp-for="@Model.planExcersiseFrequencies[j].FrequencyId" hidden/>
-                                    <input asp-for="@Model.planExcersiseFrequencies[j].Excersise" hidden/>
-                                    <input asp-for="@Model.planExcersiseFrequencies[j].ExcersiseId" hidden/>
-                                    <input asp-for="@Model.planExcersiseFrequencies[j].PlanId" hidden/>
-                                    <input asp-for="@Model.planExcersiseFrequencies[j].Id" hidden/>
-                                    <td><input asp-for="@Model.planExcersiseFrequencies[j].Description" /></td>
+                                    var obj = pefList.FirstOrDefault(pef => pef.Frequency == frequencies[i] && pef.Excersise == excersises[j]);
+                                    <td><input asp-for="@obj.Description" /></td>
                                 }
                             </tr>
                         }
@@ -94,11 +94,11 @@
             addRowButton.addEventListener('click', function () {
                 var newRow = table.insertRow(-1);
                 var newCell = newRow.insertCell(0);
-                newCell.innerHTML = '<input type="text" name="planExcersiseFrequencies[' + rowCount + '].Excersise.Name" />';
+                newCell.innerHTML = '<input placeholder="excersise" asp-for="excersises[rowCount].Name" />';
 
                 for (var i = 1; i < columnCount; i++) {
                     var newCell = newRow.insertCell(i);
-                    newCell.innerHTML = '<input type="text" name="planExcersiseFrequencies[' + rowCount + '].Description" />';
+                    newCell.innerHTML = '<input type="text" placeholder="forcycle" name="obj.Description" />';
                 }
 
                 rowCount++;
@@ -107,7 +107,11 @@
             addColumnButton.addEventListener('click', function () {
                 for (var i = 0; i < rowCount; i++) {
                     var newCell = table.rows[i].insertCell(-1);
-                    newCell.innerHTML = '<input type="text" name="planExcersiseFrequencies[' + i + '].Description" />';
+                    newCell.innerHTML = '<input type="text" placeholder="meant to be column only" name="planExcersiseFrequencies[' + i + '].Description" />';
+                    // var newColumn = table.insertColumn(-1);
+                    // // newColumn.innerHTML = '<input asp-for="Model.planExcersiseFrequencies[i].Frequency.Id" hidden> <td><input placeholder="addColumn" asp-for="Model.planExcersiseFrequencies[i].Frequency.Name" /> </td>';
+                    // var newCell = table.rows[i].insertCell(-1);
+                    // // newCell.innerHTML = '<input type="text" placeholder="addColumnShouldbecycle" name="planExcersiseFrequencies[' + i + '].Description" />';
                 }
 
                 columnCount++;

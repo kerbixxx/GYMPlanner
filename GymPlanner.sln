@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GymPlanner.WebUI", "Project\GymPlanner.WebUI.csproj", "{56830633-2268-4946-928E-9490D3496489}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GymPlanner.WebUI", "Project\GymPlanner.WebUI.csproj", "{56830633-2268-4946-928E-9490D3496489}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{80F99311-D062-4010-AEC0-891B5E600EE9}"
 EndProject
@@ -13,11 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{F2947046-A9AD-4017-AA90-A920D2382434}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GymPlanner.Infrastructure", "Infrastructure\GymPlanner.Infrastructure.csproj", "{F2994358-7DBE-41D0-8410-70991BEB49EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GymPlanner.Infrastructure", "Infrastructure\GymPlanner.Infrastructure.csproj", "{F2994358-7DBE-41D0-8410-70991BEB49EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GymPlanner.Domain", "Data\GymPlanner.Domain.csproj", "{338A0F3B-A805-4FDE-A62E-B169408F3ED0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GymPlanner.Domain", "Data\GymPlanner.Domain.csproj", "{338A0F3B-A805-4FDE-A62E-B169408F3ED0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GymPlanner.Application", "Application\GymPlanner.Application.csproj", "{A6352BA9-78FF-46FF-9F6D-1AE16D613083}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GymPlanner.Application", "Application\GymPlanner.Application.csproj", "{A6352BA9-78FF-46FF-9F6D-1AE16D613083}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

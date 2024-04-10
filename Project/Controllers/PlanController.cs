@@ -1,5 +1,5 @@
 ﻿using GymPlanner.Application.Interfaces.Repositories;
-using GymPlanner.Domain.Entities.Plan;
+using GymPlanner.Domain.Entities.Plans;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymPlanner.WebUI.Controllers
@@ -34,7 +34,6 @@ namespace GymPlanner.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(Plan plan)
         {
-            plan.UserId = 1;
             if (ModelState.IsValid)
             {
                 _planRepo.Update(plan);
@@ -61,6 +60,34 @@ namespace GymPlanner.WebUI.Controllers
                 return RedirectToAction("Index");
             }
             return View(plan);
+        }
+
+        [HttpPost]
+        public IActionResult CalculateAdjacentCells(Plan model)
+        {
+            var frequencies = model.planExcersiseFrequencies.Select(p => p.Frequency).ToList();
+            var excersises = model.planExcersiseFrequencies.Select(p => p.Excersise).ToList();
+            List<PlanExcersiseFrequency> pefList = new();
+            for (int i = 0; i < frequencies.Count(); i++)
+            {
+                for (int j = 0; j < excersises.Count(); j++)
+                {
+                    var pef = model.planExcersiseFrequencies.FirstOrDefault(pef => pef.Frequency == frequencies[i] && pef.Excersise == excersises[j]);
+                    if (pef == null)
+                        pefList.Add(new()
+                        {
+                            Plan = model,
+                            PlanId = model.Id,
+                            Frequency = frequencies[i],
+                            FrequencyId = frequencies[i].Id,
+                            Excersise = excersises[j],
+                            ExcersiseId = excersises[j].Id,
+                            Description = "0"
+                        });
+                    else pefList.Add(pef);
+                }
+            }
+            return Json(pefList);
         }
     }
 }

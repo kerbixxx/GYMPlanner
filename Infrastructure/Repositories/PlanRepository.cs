@@ -1,6 +1,6 @@
 ﻿using GymPlanner.Application.Interfaces.Repositories;
 using GymPlanner.Infrastructure.Contexts;
-using GymPlanner.Domain.Entities.Plan;
+using GymPlanner.Domain.Entities.Plans;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymPlanner.Infrastructure.Repositories

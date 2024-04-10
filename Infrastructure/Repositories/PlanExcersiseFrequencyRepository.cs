@@ -1,5 +1,5 @@
 ﻿using GymPlanner.Application.Interfaces.Repositories;
-using GymPlanner.Domain.Entities.Plan;
+using GymPlanner.Domain.Entities.Plans;
 using GymPlanner.Infrastructure.Contexts;
 using System;
 using System.Collections.Generic;
