@@ -94,28 +94,31 @@
             addRowButton.addEventListener('click', function () {
                 var newRow = table.insertRow(-1);
                 var newCell = newRow.insertCell(0);
-                newCell.innerHTML = '<input placeholder="excersise" asp-for="excersises[rowCount].Name" />';
+                newCell.innerHTML = '<input placeholder="Упражнение" asp-for="excersises[' + rowCount + '].Name" />';
 
                 for (var i = 1; i < columnCount; i++) {
                     var newCell = newRow.insertCell(i);
-                    newCell.innerHTML = '<input type="text" placeholder="forcycle" name="obj.Description" />';
+                    newCell.innerHTML = '<input type="text" placeholder="Описание" name="planExcersiseFrequencies[' + (rowCount - 1) + '].Description" />';
                 }
 
                 rowCount++;
             });
 
             addColumnButton.addEventListener('click', function () {
-                for (var i = 0; i < rowCount; i++) {
+                // Добавление новой ячейки в заголовок таблицы
+                var headerRow = table.rows[0];
+                var newHeaderCell = headerRow.insertCell(-1);
+                newHeaderCell.innerHTML = '<input type="text" placeholder="Частота" name="frequencies[' + columnCount + '].Name" />';
+
+                // Добавление ячейки с input для каждой строки в таблице
+                for (var i = 1; i < rowCount; i++) {
                     var newCell = table.rows[i].insertCell(-1);
-                    newCell.innerHTML = '<input type="text" placeholder="meant to be column only" name="planExcersiseFrequencies[' + i + '].Description" />';
-                    // var newColumn = table.insertColumn(-1);
-                    // // newColumn.innerHTML = '<input asp-for="Model.planExcersiseFrequencies[i].Frequency.Id" hidden> <td><input placeholder="addColumn" asp-for="Model.planExcersiseFrequencies[i].Frequency.Name" /> </td>';
-                    // var newCell = table.rows[i].insertCell(-1);
-                    // // newCell.innerHTML = '<input type="text" placeholder="addColumnShouldbecycle" name="planExcersiseFrequencies[' + i + '].Description" />';
+                    newCell.innerHTML = '<input type="text" placeholder="Описание" name="planExcersiseFrequencies[' + (i - 1) + '].Description" />';
                 }
 
                 columnCount++;
             });
+
         });
     </script>
 
