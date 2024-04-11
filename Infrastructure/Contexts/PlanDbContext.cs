@@ -12,6 +12,7 @@ namespace GymPlanner.Infrastructure.Contexts
     public class PlanDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
         public DbSet<Plan> Plans { get; set; }
         public DbSet<Excersise> Excersises { get; set; }
         public DbSet<Frequency> Frequencies { get; set; }
@@ -24,20 +25,18 @@ namespace GymPlanner.Infrastructure.Contexts
             modelBuilder.Entity<User>()
                 .HasKey(k => k.Id);
 
-            modelBuilder.Entity<User>()
-                .Property(u => u.DisplayName)
-                .HasMaxLength(70)
-                .IsRequired();
+            string adminRoleName = "admin";
+            string userRoleName = "user";
 
-            var adminUser = new User
-            {
-                Id = 1,
-                DisplayName = "admin",
-                Email = "admin@example.com",
-                Password = "admin1234"
-            };
+            string adminEmail = "admin@mail.ru";
+            string adminPassword = "123456";
 
-            modelBuilder.Entity<User>().HasData(adminUser);
+            Role adminRole = new Role { Id = 1, Name = adminRoleName };
+            Role userRole = new Role { Id = 2, Name = userRoleName };
+            User adminUser = new User { Id = 1, Email = adminEmail, Password = adminPassword, RoleId = adminRole.Id };
+
+            modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
+            modelBuilder.Entity<User>().HasData(new User[] { adminUser });
 
             modelBuilder.Entity<PlanExcersiseFrequency>()
                 .HasKey(k => new { k.PlanId, k.FrequencyId, k.ExcersiseId, k.Id });

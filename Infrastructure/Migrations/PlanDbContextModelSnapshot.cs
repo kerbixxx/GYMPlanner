@@ -21,7 +21,7 @@ namespace GymPlanner.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("GymPlanner.Domain.Entities.Identity.User", b =>
+            modelBuilder.Entity("GymPlanner.Domain.Entities.Identity.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -29,10 +29,34 @@ namespace GymPlanner.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DisplayName")
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(70)
-                        .HasColumnType("nvarchar(70)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "user"
+                        });
+                });
+
+            modelBuilder.Entity("GymPlanner.Domain.Entities.Identity.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -42,7 +66,12 @@ namespace GymPlanner.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
 
@@ -50,9 +79,9 @@ namespace GymPlanner.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            DisplayName = "admin",
-                            Email = "admin@example.com",
-                            Password = "admin1234"
+                            Email = "admin@mail.ru",
+                            Password = "123456",
+                            RoleId = 1
                         });
                 });
 
@@ -178,6 +207,17 @@ namespace GymPlanner.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("GymPlanner.Domain.Entities.Identity.User", b =>
+                {
+                    b.HasOne("GymPlanner.Domain.Entities.Identity.Role", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("GymPlanner.Domain.Entities.Plans.Plan", b =>
                 {
                     b.HasOne("GymPlanner.Domain.Entities.Identity.User", "User")
@@ -214,6 +254,11 @@ namespace GymPlanner.Infrastructure.Migrations
                     b.Navigation("Frequency");
 
                     b.Navigation("Plan");
+                });
+
+            modelBuilder.Entity("GymPlanner.Domain.Entities.Identity.Role", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("GymPlanner.Domain.Entities.Identity.User", b =>

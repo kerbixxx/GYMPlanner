@@ -2,6 +2,8 @@
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace GymPlanner.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -37,18 +39,37 @@ namespace GymPlanner.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DisplayName = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -106,9 +127,38 @@ namespace GymPlanner.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Excersises",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { 1, "Упражнение 1" });
+
+            migrationBuilder.InsertData(
+                table: "Frequencies",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { 1, "Частота 1" });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "admin" },
+                    { 2, "user" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "DisplayName", "Email", "Password" },
-                values: new object[] { 1, "admin", "admin@example.com", "admin1234" });
+                columns: new[] { "Id", "Email", "Password", "RoleId" },
+                values: new object[] { 1, "admin@mail.ru", "123456", 1 });
+
+            migrationBuilder.InsertData(
+                table: "Plans",
+                columns: new[] { "Id", "Name", "UserId" },
+                values: new object[] { 1, "План 1", 1 });
+
+            migrationBuilder.InsertData(
+                table: "PlanExcersiseFrequencys",
+                columns: new[] { "ExcersiseId", "FrequencyId", "Id", "PlanId", "Description" },
+                values: new object[] { 1, 1, 1, 1, "15" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_PlanExcersiseFrequencys_ExcersiseId",
@@ -124,6 +174,11 @@ namespace GymPlanner.Infrastructure.Migrations
                 name: "IX_Plans_UserId",
                 table: "Plans",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_RoleId",
+                table: "Users",
+                column: "RoleId");
         }
 
         /// <inheritdoc />
@@ -143,6 +198,9 @@ namespace GymPlanner.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
         }
     }
 }
