@@ -7,8 +7,8 @@ namespace GymPlanner.Infrastructure.Repositories
 {
     public class PlanRepository : Repository<Plan>, IPlanRepository
     {
-        private readonly ApplicationDbContext _db;
-        public PlanRepository(ApplicationDbContext db) : base(db)
+        private readonly PlanDbContext _db;
+        public PlanRepository(PlanDbContext db) : base(db)
         {
             _db = db;
         }

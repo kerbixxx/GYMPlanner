@@ -1,25 +1,28 @@
 using GymPlanner.Infrastructure.Contexts;
-using GymPlanner.Infrastructure.Repositories;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using GymPlanner.Infrastructure;
-using GymPlanner.Application.Interfaces.Repositories;
-using Microsoft.AspNetCore.Identity;
-using GymPlanner.Domain.Entities.Identity;
 using GymPlanner.Application;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<PlanDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLExpress"));
 });
 
-builder.Services.AddIdentity<User, DefaultRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddDbContext<UserContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLExpress"));
+});
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options => 
+    {
+        options.LoginPath = new PathString("/Account/Login");
+    });
 
 builder.Services.AddRepositories();
 builder.Services.AddApplication();

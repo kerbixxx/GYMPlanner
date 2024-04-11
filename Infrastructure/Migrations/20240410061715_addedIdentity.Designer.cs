@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GymPlanner.Infrastructure.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(PlanDbContext))]
     [Migration("20240410061715_addedIdentity")]
     partial class addedIdentity
     {

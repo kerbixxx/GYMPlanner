@@ -9,15 +9,14 @@ using System.Diagnostics.Metrics;
 
 namespace GymPlanner.Infrastructure.Contexts
 {
-    public class ApplicationDbContext : IdentityDbContext<User>
+    public class PlanDbContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
         public DbSet<Plan> Plans { get; set; }
         public DbSet<Excersise> Excersises { get; set; }
         public DbSet<Frequency> Frequencies { get; set; }
         public DbSet<PlanExcersiseFrequency> PlanExcersiseFrequencys { get;set; }
 
-        public ApplicationDbContext(DbContextOptions options) : base(options) { }
+        public PlanDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,14 +24,6 @@ namespace GymPlanner.Infrastructure.Contexts
 
             modelBuilder.Entity<PlanExcersiseFrequency>()
                 .HasKey(k => new { k.PlanId, k.FrequencyId, k.ExcersiseId, k.Id });
-
-            modelBuilder.Entity<User>()
-                .HasKey(k => k.Id);
-
-            modelBuilder.Entity<User>()
-                .Property(u => u.DisplayName)
-                .HasMaxLength(70)
-                .IsRequired();
 
             modelBuilder.Entity<Plan>()
                 .HasKey(k => k.Id);
@@ -69,16 +60,6 @@ namespace GymPlanner.Infrastructure.Contexts
             modelBuilder.Entity<PlanExcersiseFrequency>()
                 .Property(pef => pef.Id)
                 .ValueGeneratedOnAdd();
-
-            var adminUser = new User
-            {
-                UserName = "admin",
-                Email = "admin@example.com",
-                DisplayName="admin",
-                PasswordHash = new PasswordHasher<User>().HashPassword(null, "Admin123#")
-            };
-
-            modelBuilder.Entity<User>().HasData(adminUser);
         }
     }
 }

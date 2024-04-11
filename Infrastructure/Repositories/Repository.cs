@@ -6,9 +6,9 @@ namespace GymPlanner.Infrastructure.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly ApplicationDbContext _db;
+        private readonly PlanDbContext _db;
         DbSet<T> _dbSet;
-        public Repository(ApplicationDbContext db)
+        public Repository(PlanDbContext db)
         {
             _db = db;
             this._dbSet = _db.Set<T>();

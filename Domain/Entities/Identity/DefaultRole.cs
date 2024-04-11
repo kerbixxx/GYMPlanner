@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GymPlanner.Domain.Entities.Identity
 {
-    public class DefaultRole : IdentityRole
+    public class DefaultRole
     {
     }
 }
