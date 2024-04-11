@@ -1,4 +1,5 @@
 ﻿using GymPlanner.Application.Interfaces.Repositories;
+using GymPlanner.Application.Models.Plan;
 using GymPlanner.Domain.Entities.Plans;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,19 +31,25 @@ namespace GymPlanner.WebUI.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var plan = await _planRepo.Get(id);
-            return View(plan);
+            var planDto = new PlanEditDto()
+            {
+                Excersises = plan.planExcersiseFrequencies.Select(p => p.Excersise).ToList(),
+                Frequencies = plan.planExcersiseFrequencies.Select(p => p.Frequency).ToList(),
+                PlanId = plan.Id
+            };
+            return View(planDto);
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Edit(Plan plan)
+        public async Task<IActionResult> Edit(PlanEditDto planDto)
         {
             if (ModelState.IsValid)
             {
-                _planRepo.Update(plan);
+                //_planRepo.Update(plan);
                 await _planRepo.Save();
                 return RedirectToAction("Index");
             }
-            return await Edit(plan);
+            return await Edit(planDto);
         }
         [Authorize]
         public IActionResult Create()
@@ -56,7 +63,7 @@ namespace GymPlanner.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Plan plan)
         {
-            plan.UserId = 1; // На данный момент костыль. Потом нужно будет смотреть через UserManager кто создает план.
+            plan.UserId = 1; // На данный момент костыль. Потом нужно будет смотреть через User.Identity кто создает план.
             if(ModelState.IsValid)
             {
                 await _planRepo.Add(plan);
