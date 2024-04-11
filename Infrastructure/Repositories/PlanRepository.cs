@@ -13,7 +13,7 @@ namespace GymPlanner.Infrastructure.Repositories
             _db = db;
         }
 
-        public override async Task<Plan> Get(int id)
+        public override async Task<Plan> GetAsync(int id)
         {
             return await _db.Plans.Include(p => p.planExcersiseFrequencies)
                     .ThenInclude(p=>p.Frequency)

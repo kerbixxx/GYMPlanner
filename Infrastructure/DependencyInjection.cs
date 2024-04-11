@@ -12,6 +12,7 @@
             {
                 services.AddScoped<IPlanRepository, PlanRepository>();
                 services.AddScoped<IPlanExcersiseFrequencyRepository, PlanExcersiseFrequencyRepository>();
+                services.AddScoped<IUserRepository, UserRepository>();
                 return services;
             }
         }

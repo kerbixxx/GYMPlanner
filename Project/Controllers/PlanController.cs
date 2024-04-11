@@ -23,14 +23,16 @@ namespace GymPlanner.WebUI.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var plan = await _planRepo.Get(id);
+            var plan = await _planRepo.GetAsync(id);
+            if (plan == null) return BadRequest();
             return View(plan);
         }
 
         [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
-            var plan = await _planRepo.Get(id);
+            var plan = await _planRepo.GetAsync(id);
+            if (plan == null) return BadRequest();
             var planDto = new PlanEditDto()
             {
                 Excersises = plan.planExcersiseFrequencies.Select(p => p.Excersise).ToList(),
@@ -46,7 +48,6 @@ namespace GymPlanner.WebUI.Controllers
             if (ModelState.IsValid)
             {
                 //_planRepo.Update(plan);
-                await _planRepo.Save();
                 return RedirectToAction("Index");
             }
             return await Edit(planDto);
@@ -66,8 +67,7 @@ namespace GymPlanner.WebUI.Controllers
             plan.UserId = 1; // На данный момент костыль. Потом нужно будет смотреть через User.Identity кто создает план.
             if(ModelState.IsValid)
             {
-                await _planRepo.Add(plan);
-                await _planRepo.Save();
+                await _planRepo.AddAsync(plan);
                 return RedirectToAction("Index");
             }
             return View(plan);

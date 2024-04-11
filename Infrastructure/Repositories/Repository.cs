@@ -14,28 +14,26 @@ namespace GymPlanner.Infrastructure.Repositories
             this._dbSet = _db.Set<T>();
         }
 
-        public async Task Add(T entity)
+        public async Task AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
+            await _db.SaveChangesAsync();
         }
 
-        public async virtual Task<T> Get(int id)
+        public async virtual Task<T> GetAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }
 
-        public void Remove(T entity)
+        public async Task RemoveAsync(T entity)
         {
             _dbSet.Remove(entity);
+            await _db.SaveChangesAsync();
         }
 
-        public void Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
-        }
-
-        public async Task Save()
-        {
             await _db.SaveChangesAsync();
         }
     }
