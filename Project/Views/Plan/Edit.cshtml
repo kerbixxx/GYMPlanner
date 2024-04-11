@@ -1,8 +1,8 @@
-﻿@using GymPlanner.Domain.Entities.Plans;
-@model Plan
+﻿@using GymPlanner.Application.Models.Plan;
+@model PlanEditDto
 
 <form method="post" asp-action="Edit">
-    <input asp-for="UserId" hidden />
+    <input asp-for="PlanId" hidden />
     <div class="border b3">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="row pt-4">
@@ -13,46 +13,35 @@
                 <a asp-action="Index" class="btn btn-primary w-50">Назад</a>
             </div>
         </div>
-        <div class="row">
-            <div class="col-8">
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="Name"></label>
-                    </div>
-                    <div class="col-8">
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <br /><br />
+
         <div class="row">
             <div class="col-16">
                 <table class="table table-bordered border-primary" style="width:100%">
                     <thead>
                         <tr>
                             <td>Упражнения/Дни</td>
-                            @for (int i = 0; i < Model.planExcersiseFrequencies.Select(p => p.Frequency).Count(); i++)
+                            @for (int i = 0; i < Model.Frequencies.Count(); i++)
                                 {
-                                <input asp-for="@Model.planExcersiseFrequencies[i].Frequency.Id" hidden>
-                                <td><input asp-for="@Model.planExcersiseFrequencies[i].Frequency.Name" /></td>
+                                <input asp-for="@Model.Frequencies[i].Id" hidden>
+                                <td><input asp-for="@Model.Frequencies[i].Name" /></td>
                             }
                         </tr>
                     </thead>
                     <tbody>
-                        @for (int i = 0; i < Model.planExcersiseFrequencies.Select(p => p.Excersise).Count(); i++)
+                        @for (int i = 0; i < Model.Excersises.Count(); i++)
                         {
                             <tr>
-                                <td><input asp-for="@Model.planExcersiseFrequencies[i].Excersise.Name" /></td>
-                                <input asp-for="@Model.planExcersiseFrequencies[i].Excersise.Id" hidden />
-                                @for (int j = 0; j < Model.planExcersiseFrequencies.Select(p => p.Frequency).Count(); j++)
+                                <td><input asp-for="@Model.Excersises[i].Name" /></td>
+                                <input asp-for="@Model.Excersises[i].Id" hidden />
+                                @for (int j = 0; j < Model.Frequencies.Count(); j++)
                                 {
-                                    var obj = Model.planExcersiseFrequencies.Select(p => p.Frequency).Count();
-                                    var index = j + (i * (Model.planExcersiseFrequencies.Select(p => p.Excersise).Count()));
-                                    <input asp-for="@Model.planExcersiseFrequencies[index].ExcersiseId" hidden/>
-                                    <input asp-for="@Model.planExcersiseFrequencies[index].FrequencyId" hidden/>
-                                    <td><input asp-for="@Model.planExcersiseFrequencies[index].Description" value="@Model.planExcersiseFrequencies.FirstOrDefault(pef=>pef.Frequency==Model.planExcersiseFrequencies[j].Frequency&&pef.Excersise==Model.planExcersiseFrequencies[i].Excersise).Description" /></td>
+                                    var obj = Model.Frequencies.Count();
+                                    var index = j + (i * (Model.Excersises.Count()));
+                                    <input asp-for="@Model.PlanExcersiseFrequencies[index].ExcersiseId" hidden/>
+                                    <input asp-for="@Model.PlanExcersiseFrequencies[index].FrequencyId" hidden/>
+                                    <td><input asp-for="@Model.PlanExcersiseFrequencies[index].Description" value="@Model.PlanExcersiseFrequencies.FirstOrDefault(pef=>pef.Frequency==Model.PlanExcersiseFrequencies[j].Frequency&&pef.Excersise==Model.PlanExcersiseFrequencies[i].Excersise).Description" /></td>
                                 }
                             </tr>
                         }
@@ -93,11 +82,11 @@
             addRowButton.addEventListener('click', function () {
                 var newRow = table.insertRow(-1);
                 var newCell = newRow.insertCell(0);
-                newCell.innerHTML = '<input placeholder="Упражнение" asp-for="excersises[' + rowCount + '].Name" />';
+                newCell.innerHTML = '<input placeholder="Упражнение" name="PlanExcersiseFrequencies[' + (rowCount - 1) + '].Excersise.Name" />';
 
                 for (var i = 1; i < columnCount; i++) {
                     var newCell = newRow.insertCell(i);
-                    newCell.innerHTML = '<input type="text" placeholder="Описание" name="planExcersiseFrequencies[' + (rowCount - 1) + '].Description" />';
+                    newCell.innerHTML = '<input type="text" placeholder="Описание" name="PlanExcersiseFrequencies[' + ((i - 1) + ((rowCount - 1) * (columnCount - 1))) + '].Description" />';
                 }
 
                 rowCount++;
@@ -107,16 +96,17 @@
                 // Добавление новой ячейки в заголовок таблицы
                 var headerRow = table.rows[0];
                 var newHeaderCell = headerRow.insertCell(-1);
-                newHeaderCell.innerHTML = '<input type="text" placeholder="Частота" name="frequencies[' + columnCount + '].Name" />';
+                newHeaderCell.innerHTML = '<input type="text" placeholder="Частота" name="PlanExcersiseFrequencies[' + (columnCount - 1) + '].Frequency.Name" />';
 
                 // Добавление ячейки с input для каждой строки в таблице
                 for (var i = 1; i < rowCount; i++) {
                     var newCell = table.rows[i].insertCell(-1);
-                    newCell.innerHTML = '<input type="text" placeholder="Описание" name="planExcersiseFrequencies[' + (i - 1) + '].Description" />';
+                    newCell.innerHTML = '<input type="text" placeholder="Описание колонк" name="PlanExcersiseFrequencies[' + ((i - 1) + ((rowCount - 1) * (columnCount - 1))) + '].Description" /><input name="PlanExcersiseFrequencies[' + ((i - 1) + ((rowCount - 1) * (columnCount - 1))) + '].Frequency" hidden/><input name="PlanExcersiseFrequencies[' + ((i - 1) + ((rowCount - 1) * (columnCount - 1))) + '].Excersise" hidden/><input name="PlanExcersiseFrequencies[' + ((i - 1) + ((rowCount - 1) * (columnCount - 1))) + '].Plan" hidden/>';
                 }
 
                 columnCount++;
             });
+
         });
     </script>
 }
