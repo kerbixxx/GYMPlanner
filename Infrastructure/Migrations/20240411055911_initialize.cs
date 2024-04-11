@@ -5,7 +5,7 @@
 namespace GymPlanner.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Initialize : Migration
+    public partial class initialize : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -42,8 +42,9 @@ namespace GymPlanner.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    DisplayName = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -106,8 +107,8 @@ namespace GymPlanner.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "FirstName", "LastName" },
-                values: new object[] { 1, "Alex", "Xela" });
+                columns: new[] { "Id", "DisplayName", "Email", "Password" },
+                values: new object[] { 1, "admin", "admin@example.com", "admin1234" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_PlanExcersiseFrequencys_ExcersiseId",

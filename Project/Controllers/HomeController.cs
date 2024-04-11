@@ -17,7 +17,8 @@ namespace GymPlanner.WebUI.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            return Content(User.Identity.Name);
+            return View();
+            //return Content(User.Identity.Name);
         }
 
         public IActionResult Privacy()

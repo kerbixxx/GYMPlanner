@@ -1,5 +1,6 @@
 ﻿using GymPlanner.Application.Interfaces.Repositories;
 using GymPlanner.Domain.Entities.Plans;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymPlanner.WebUI.Controllers
@@ -25,12 +26,13 @@ namespace GymPlanner.WebUI.Controllers
             return View(plan);
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
             var plan = await _planRepo.Get(id);
             return View(plan);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Edit(Plan plan)
         {
@@ -42,12 +44,14 @@ namespace GymPlanner.WebUI.Controllers
             }
             return await Edit(plan);
         }
+        [Authorize]
         public IActionResult Create()
         {
             var plan = new Plan();
             return View(plan);
         }
 
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Plan plan)
@@ -61,7 +65,7 @@ namespace GymPlanner.WebUI.Controllers
             }
             return View(plan);
         }
-
+        [Authorize]
         [HttpPost]
         public IActionResult CalculateAdjacentCells(Plan model)
         {

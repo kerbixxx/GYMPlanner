@@ -7,12 +7,12 @@ using System.Security.Claims;
 using GymPlanner.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 
-namespace GymPlanner.WebUI
+namespace GymPlanner.WebUI.Controllers
 {
     public class AccountController : Controller
     {
-        private UserContext db;
-        public AccountController(UserContext context)
+        private PlanDbContext db;
+        public AccountController(PlanDbContext context)
         {
             db = context;
         }
@@ -53,7 +53,7 @@ namespace GymPlanner.WebUI
                 if (user == null)
                 {
                     // добавляем пользователя в бд
-                    db.Users.Add(new User { Email = model.Email, Password = model.Password });
+                    db.Users.Add(new User { Email = model.Email, Password = model.Password, DisplayName=model.Email });
                     await db.SaveChangesAsync();
 
                     await Authenticate(model.Email); // аутентификация

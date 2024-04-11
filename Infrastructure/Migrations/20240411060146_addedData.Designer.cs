@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymPlanner.Infrastructure.Migrations
 {
     [DbContext(typeof(PlanDbContext))]
-    [Migration("20240409083147_Initialize")]
-    partial class Initialize
+    [Migration("20240411060146_addedData")]
+    partial class addedData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,42 @@ namespace GymPlanner.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("GymPlanner.Domain.Entities.Plan.Excersise", b =>
+            modelBuilder.Entity("GymPlanner.Domain.Entities.Identity.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(70)
+                        .HasColumnType("nvarchar(70)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DisplayName = "admin",
+                            Email = "admin@example.com",
+                            Password = "admin1234"
+                        });
+                });
+
+            modelBuilder.Entity("GymPlanner.Domain.Entities.Plans.Excersise", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -40,9 +75,16 @@ namespace GymPlanner.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Excersises");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Упражнение 1"
+                        });
                 });
 
-            modelBuilder.Entity("GymPlanner.Domain.Entities.Plan.Frequency", b =>
+            modelBuilder.Entity("GymPlanner.Domain.Entities.Plans.Frequency", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -58,9 +100,16 @@ namespace GymPlanner.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Frequencies");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Частота 1"
+                        });
                 });
 
-            modelBuilder.Entity("GymPlanner.Domain.Entities.Plan.Plan", b =>
+            modelBuilder.Entity("GymPlanner.Domain.Entities.Plans.Plan", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -81,9 +130,17 @@ namespace GymPlanner.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Plans");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "План 1",
+                            UserId = 1
+                        });
                 });
 
-            modelBuilder.Entity("GymPlanner.Domain.Entities.Plan.PlanExcersiseFrequency", b =>
+            modelBuilder.Entity("GymPlanner.Domain.Entities.Plans.PlanExcersiseFrequency", b =>
                 {
                     b.Property<int>("PlanId")
                         .HasColumnType("int");
@@ -112,42 +169,21 @@ namespace GymPlanner.Infrastructure.Migrations
                     b.HasIndex("FrequencyId");
 
                     b.ToTable("PlanExcersiseFrequencys");
-                });
-
-            modelBuilder.Entity("GymPlanner.Domain.Entities.Plan.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
 
                     b.HasData(
                         new
                         {
+                            PlanId = 1,
+                            FrequencyId = 1,
+                            ExcersiseId = 1,
                             Id = 1,
-                            FirstName = "Alex",
-                            LastName = "Xela"
+                            Description = "15"
                         });
                 });
 
-            modelBuilder.Entity("GymPlanner.Domain.Entities.Plan.Plan", b =>
+            modelBuilder.Entity("GymPlanner.Domain.Entities.Plans.Plan", b =>
                 {
-                    b.HasOne("GymPlanner.Domain.Entities.Plan.User", "User")
+                    b.HasOne("GymPlanner.Domain.Entities.Identity.User", "User")
                         .WithMany("Plans")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -156,21 +192,21 @@ namespace GymPlanner.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GymPlanner.Domain.Entities.Plan.PlanExcersiseFrequency", b =>
+            modelBuilder.Entity("GymPlanner.Domain.Entities.Plans.PlanExcersiseFrequency", b =>
                 {
-                    b.HasOne("GymPlanner.Domain.Entities.Plan.Excersise", "Excersise")
+                    b.HasOne("GymPlanner.Domain.Entities.Plans.Excersise", "Excersise")
                         .WithMany()
                         .HasForeignKey("ExcersiseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GymPlanner.Domain.Entities.Plan.Frequency", "Frequency")
+                    b.HasOne("GymPlanner.Domain.Entities.Plans.Frequency", "Frequency")
                         .WithMany()
                         .HasForeignKey("FrequencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GymPlanner.Domain.Entities.Plan.Plan", "Plan")
+                    b.HasOne("GymPlanner.Domain.Entities.Plans.Plan", "Plan")
                         .WithMany("planExcersiseFrequencies")
                         .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -183,14 +219,14 @@ namespace GymPlanner.Infrastructure.Migrations
                     b.Navigation("Plan");
                 });
 
-            modelBuilder.Entity("GymPlanner.Domain.Entities.Plan.Plan", b =>
-                {
-                    b.Navigation("planExcersiseFrequencies");
-                });
-
-            modelBuilder.Entity("GymPlanner.Domain.Entities.Plan.User", b =>
+            modelBuilder.Entity("GymPlanner.Domain.Entities.Identity.User", b =>
                 {
                     b.Navigation("Plans");
+                });
+
+            modelBuilder.Entity("GymPlanner.Domain.Entities.Plans.Plan", b =>
+                {
+                    b.Navigation("planExcersiseFrequencies");
                 });
 #pragma warning restore 612, 618
         }

@@ -13,11 +13,6 @@ builder.Services.AddDbContext<PlanDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLExpress"));
 });
 
-builder.Services.AddDbContext<UserContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLExpress"));
-});
-
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options => 
     {
