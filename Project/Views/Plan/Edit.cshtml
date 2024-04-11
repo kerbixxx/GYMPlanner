@@ -93,11 +93,11 @@
             addRowButton.addEventListener('click', function () {
                 var newRow = table.insertRow(-1);
                 var newCell = newRow.insertCell(0);
-                newCell.innerHTML = '<input placeholder="Упражнение" name="planExcersiseFrequencies[' + (rowCount - 1) + '].Excersise.Name" />';
+                newCell.innerHTML = '<input placeholder="Упражнение" asp-for="excersises[' + rowCount + '].Name" />';
 
                 for (var i = 1; i < columnCount; i++) {
                     var newCell = newRow.insertCell(i);
-                    newCell.innerHTML = '<input type="text" placeholder="Описание" name="planExcersiseFrequencies[' + ((i-1) + ((rowCount - 1) * (columnCount - 1))) + '].Description" />';
+                    newCell.innerHTML = '<input type="text" placeholder="Описание" name="planExcersiseFrequencies[' + (rowCount - 1) + '].Description" />';
                 }
 
                 rowCount++;
@@ -107,17 +107,16 @@
                 // Добавление новой ячейки в заголовок таблицы
                 var headerRow = table.rows[0];
                 var newHeaderCell = headerRow.insertCell(-1);
-                newHeaderCell.innerHTML = '<input type="text" placeholder="Частота" name="planExcersiseFrequencies[' + (columnCount - 1) + '].Frequency.Name" />';
+                newHeaderCell.innerHTML = '<input type="text" placeholder="Частота" name="frequencies[' + columnCount + '].Name" />';
 
                 // Добавление ячейки с input для каждой строки в таблице
                 for (var i = 1; i < rowCount; i++) {
                     var newCell = table.rows[i].insertCell(-1);
-                    newCell.innerHTML = '<input type="text" placeholder="Описание колонк" name="planExcersiseFrequencies[' + ((i-1) + ((rowCount-1) * (columnCount-1))) + '].Description" /><input name="planExcersiseFrequencies[' + ((i - 1) + ((rowCount - 1) * (columnCount - 1))) + '].Frequency" hidden/><input name="planExcersiseFrequencies[' + ((i - 1) + ((rowCount - 1) * (columnCount - 1))) + '].Excersise" hidden/><input name="planExcersiseFrequencies[' + ((i - 1) + ((rowCount - 1) * (columnCount - 1))) + '].Plan" hidden/>';
+                    newCell.innerHTML = '<input type="text" placeholder="Описание" name="planExcersiseFrequencies[' + (i - 1) + '].Description" />';
                 }
 
                 columnCount++;
             });
-
         });
     </script>
 }

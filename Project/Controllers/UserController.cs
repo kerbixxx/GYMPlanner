@@ -1,4 +1,5 @@
 ﻿using GymPlanner.Domain.Entities.Identity;
+using GymPlanner.WebUI.DTOs.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,11 +21,11 @@ namespace GymPlanner.WebUI.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult Login(LoginDTO dto)
-        //{
-        //    return Json(dto);
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Login(LoginDTO dto)
+        {
+            return Json(dto);
+        }
     }
 }
