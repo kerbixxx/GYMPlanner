@@ -3,6 +3,8 @@
 
 <form method="post" asp-action="Edit">
     <input asp-for="PlanId" hidden />
+    <input asp-for="UserId" hidden />
+    <input asp-for="Name" hidden />
     <div class="border b3">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="row pt-4">
@@ -37,10 +39,17 @@
                                 <input asp-for="@Model.Excersises[i].Id" hidden />
                                 @for (int j = 0; j < Model.Frequencies.Count(); j++)
                                 {
-                                    var obj = Model.Frequencies.Count();
                                     var index = j + (i * (Model.Excersises.Count()));
+                                    Model.PlanExcersiseFrequencies[index].Excersise = Model.Excersises[i];
+                                    Model.PlanExcersiseFrequencies[index].Frequency = Model.Frequencies[j];
                                     <input asp-for="@Model.PlanExcersiseFrequencies[index].ExcersiseId" hidden/>
+                                    <input asp-for="@Model.PlanExcersiseFrequencies[index].Excersise.Name" hidden/>
+                                    <input asp-for="@Model.PlanExcersiseFrequencies[index].Excersise.Id" hidden/>
+                                    <input asp-for="@Model.PlanExcersiseFrequencies[index].Frequency.Name" hidden/>
+                                    <input asp-for="@Model.PlanExcersiseFrequencies[index].Frequency.Id" hidden/>
                                     <input asp-for="@Model.PlanExcersiseFrequencies[index].FrequencyId" hidden/>
+                                    <input asp-for="@Model.PlanExcersiseFrequencies[index].Id" hidden/>
+                                    <input asp-for="@Model.PlanExcersiseFrequencies[index].PlanId" hidden/>
                                     <td><input asp-for="@Model.PlanExcersiseFrequencies[index].Description" value="@Model.PlanExcersiseFrequencies.FirstOrDefault(pef=>pef.Frequency==Model.PlanExcersiseFrequencies[j].Frequency&&pef.Excersise==Model.PlanExcersiseFrequencies[i].Excersise).Description" /></td>
                                 }
                             </tr>
@@ -82,7 +91,7 @@
             addRowButton.addEventListener('click', function () {
                 var newRow = table.insertRow(-1);
                 var newCell = newRow.insertCell(0);
-                newCell.innerHTML = '<input placeholder="Упражнение" name="PlanExcersiseFrequencies[' + (rowCount - 1) + '].Excersise.Name" />';
+                newCell.innerHTML = '<input placeholder="Упражнение" name="Excersises[' + (rowCount - 1) + '].Name" />';
 
                 for (var i = 1; i < columnCount; i++) {
                     var newCell = newRow.insertCell(i);
@@ -96,7 +105,7 @@
                 // Добавление новой ячейки в заголовок таблицы
                 var headerRow = table.rows[0];
                 var newHeaderCell = headerRow.insertCell(-1);
-                newHeaderCell.innerHTML = '<input type="text" placeholder="Частота" name="PlanExcersiseFrequencies[' + (columnCount - 1) + '].Frequency.Name" />';
+                newHeaderCell.innerHTML = '<input type="text" placeholder="Частота" name="Frequencies[' + (columnCount - 1) + '].Name" />';
 
                 // Добавление ячейки с input для каждой строки в таблице
                 for (var i = 1; i < rowCount; i++) {

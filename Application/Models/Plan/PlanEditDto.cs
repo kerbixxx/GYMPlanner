@@ -10,6 +10,8 @@ namespace GymPlanner.Application.Models.Plan
     public class PlanEditDto
     {
         public int PlanId { get; set; }
+        public int UserId { get; set; }
+        public string Name { get; set; }
         public List<Excersise>? Excersises { get; set; }
         public List<Frequency>? Frequencies { get; set; }
         public List<PlanExcersiseFrequency>? PlanExcersiseFrequencies { get; set; }

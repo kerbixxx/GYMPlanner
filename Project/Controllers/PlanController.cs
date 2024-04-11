@@ -37,7 +37,10 @@ namespace GymPlanner.WebUI.Controllers
             {
                 Excersises = plan.planExcersiseFrequencies.Select(p => p.Excersise).ToList(),
                 Frequencies = plan.planExcersiseFrequencies.Select(p => p.Frequency).ToList(),
-                PlanId = plan.Id
+                PlanId = plan.Id,
+                PlanExcersiseFrequencies = plan.planExcersiseFrequencies.ToList(),
+                UserId = plan.UserId,
+                Name = plan.Name
             };
             return View(planDto);
         }
@@ -47,7 +50,14 @@ namespace GymPlanner.WebUI.Controllers
         {
             if (ModelState.IsValid)
             {
-                //_planRepo.Update(plan);
+                var plan = new Plan()
+                {
+                    planExcersiseFrequencies = planDto.PlanExcersiseFrequencies,
+                    Id = planDto.PlanId,
+                    UserId = planDto.UserId,
+                    Name = planDto.Name
+                };
+                await _planRepo.UpdateAsync(plan);
                 return RedirectToAction("Index");
             }
             return await Edit(planDto);
