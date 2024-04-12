@@ -43,8 +43,12 @@
                             <td>Упражнения/Дни</td>
                             @for (int i = 0; i < Model.Frequencies.Count; i++)
                             {
-                                <input asp-for="@Model.Frequencies[i].Id" hidden />
-                                <td><input asp-for="@Model.Frequencies[i].Name"></td>
+
+                                <td>
+                                    <input asp-for="@Model.Frequencies[i].Id" hidden />
+                                    <input asp-for="@Model.Frequencies[i].Name">
+                                    <button id="deleteColumn" type="button" class="btn btn-danger btn-sm delete-button" data-frequency-id="@Model.Frequencies[i].Id">X</button>
+                                </td>
                             }
                         </tr>
                     </thead>
@@ -52,8 +56,11 @@
                         @for (int i = 0; i < Model.Exercises.Count; i++)
                         {
                             <tr>
-                                <input asp-for="@Model.Exercises[i].Id" hidden />
-                                <td><input asp-for="@Model.Exercises[i].Name"/></td>
+                                <td>
+                                    <input asp-for="@Model.Exercises[i].Id" hidden />
+                                    <input asp-for="@Model.Exercises[i].Name"/>
+                                    <button id="deleteRow" type="button" class="btn btn-danger btn-sm delete-button" data-exercise-id="@Model.Exercises[i].Id">X</button>
+                                </td>
                                 @for(int j = 0; j < Model.Frequencies.Count; j++)
                                 {
                                     int index = j*(Model.Exercises.Count)+i;
@@ -96,7 +103,6 @@
             $('#addRow').click(function () {
                 var planId = '@Model.PlanId';
 
-                // Вызов метода AddExerciseModal с передачей PlanId
                 $.get('/Plan/AddExerciseModal', { planId: planId }, function (data) {
                     $('#dialogContent').html(data);
                     $('#modDialog').modal('show');
@@ -109,10 +115,44 @@
             $('#addColumn').click(function () {
                 var planId = '@Model.PlanId';
 
-                // Вызов метода AddFrequencyModal с передачей PlanId
                 $.get('/Plan/AddFrequencyModal', { planId: planId }, function (data) {
                     $('#dialogContent').html(data);
                     $('#modDialog').modal('show');
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#deleteColumn').click(function () {
+                var frequencyId = $(this).data('frequency-id');
+
+                $.ajax({
+                    url: '/Plan/DeleteFrequency',
+                    type: 'DELETE',
+                    data: { frequencyId: frequencyId },
+                    success: function (response) {
+                        console.log('Frequency successfully deleted');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error deleting frequency:', error);
+                    }
+                });
+            });
+
+            $('#deleteRow').click(function () {
+                var exerciseId = $(this).data('exercise-id');
+
+                $.ajax({
+                    url: '/Plan/DeleteExercise',
+                    type: 'DELETE',
+                    data: { exerciseId: exerciseId },
+                    success: function (response) {
+                        console.log('Exercise successfully deleted');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error deleting exercise:', error);
+                    }
                 });
             });
         });

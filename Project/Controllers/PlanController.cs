@@ -4,6 +4,7 @@ using GymPlanner.Application.Models.Plan;
 using GymPlanner.Domain.Entities.Plans;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System.Security.Cryptography.Xml;
 
 namespace GymPlanner.WebUI.Controllers
@@ -62,6 +63,29 @@ namespace GymPlanner.WebUI.Controllers
                 Frequencies = plan.planExersiseFrequencies.Select(pef => pef.Frequency).Distinct().ToList(),
                 UserId = plan.UserId
             };
+
+            if (plan.planExersiseFrequencies.Count == 0)
+            {
+                Exercise exercise = new()
+                {
+                    Name = "Упражнение 1"
+                };
+                Frequency frequency = new()
+                {
+                    Name = "Частота 1"
+                };
+                await _exerciseRepo.AddAsync(exercise);
+                await _frequencyRepo.AddAsync(frequency);
+                PlanExerciseFrequency pef = new()
+                {
+                    PlanId = plan.Id,
+                    FrequencyId = frequency.Id,
+                    ExerciseId = exercise.Id,
+                    Description = "0"
+                };
+                await _pefRepo.AddAsync(pef);
+            }
+
             return View(planDto);
         }
         [Authorize]
@@ -195,6 +219,26 @@ namespace GymPlanner.WebUI.Controllers
             }
             return View(plan);
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteFrequency(int frequencyId)
+        {
+            var frequency = await _frequencyRepo.GetAsync(frequencyId);
+            var pef = _pefRepo.FirstOrDefault(pef=>pef.FrequencyId == frequencyId);
+            var planId = pef.PlanId;
+            await _frequencyRepo.RemoveAsync(frequency);
+            return RedirectToAction("Edit", new { Id = planId });
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteExercise(int exerciseId)
+        {
+            var exercise = await _exerciseRepo.GetAsync(exerciseId);
+            var pef = _pefRepo.FirstOrDefault(pef=>pef.ExerciseId == exerciseId);
+            var planId = pef.PlanId;
+            await _exerciseRepo.RemoveAsync(exercise);
+            return RedirectToAction("Edit",new { Id = planId });
+        }
+
         [Authorize]
         [HttpPost]
         public IActionResult CalculateAdjacentCells(Plan model)
