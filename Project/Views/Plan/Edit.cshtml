@@ -56,7 +56,7 @@
                                 <td><input asp-for="@Model.Exercises[i].Name"/></td>
                                 @for(int j = 0; j < Model.Frequencies.Count; j++)
                                 {
-                                    int index = j*(Model.Exercises.Count-1)+i;
+                                    int index = j*(Model.Exercises.Count)+i;
                                     <input asp-for="@Model.ExerciseFrequencies[index].ExerciseId" hidden/>
                                     <input asp-for="@Model.ExerciseFrequencies[index].Id" hidden />
                                     <input asp-for="@Model.ExerciseFrequencies[index].FrequencyId" hidden />
@@ -109,7 +109,7 @@
             $('#addColumn').click(function () {
                 var planId = '@Model.PlanId';
 
-                // Вызов метода AddExerciseModal с передачей PlanId
+                // Вызов метода AddFrequencyModal с передачей PlanId
                 $.get('/Plan/AddFrequencyModal', { planId: planId }, function (data) {
                     $('#dialogContent').html(data);
                     $('#modDialog').modal('show');

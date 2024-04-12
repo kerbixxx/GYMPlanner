@@ -168,11 +168,29 @@ namespace GymPlanner.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Plan plan)
         {
-            var user = _userRepo.FindByNameAsync(User.Identity.Name);
+            var user = await _userRepo.FindByNameAsync(User.Identity.Name);
             plan.UserId = user.Id;
             if (ModelState.IsValid)
             {
                 await _planRepo.AddAsync(plan);
+                Exercise exercise = new()
+                {
+                    Name = "Упражнение 1"
+                };
+                Frequency frequency = new()
+                {
+                    Name = "Частота 1"
+                };
+                await _exerciseRepo.AddAsync(exercise);
+                await _frequencyRepo.AddAsync(frequency);
+                PlanExerciseFrequency pef = new()
+                {
+                    PlanId = plan.Id,
+                    FrequencyId = frequency.Id,
+                    ExerciseId = exercise.Id,
+                    Description = "0"
+                };
+                await _pefRepo.AddAsync(pef);
                 return RedirectToAction("Index");
             }
             return View(plan);
