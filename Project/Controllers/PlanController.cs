@@ -33,13 +33,23 @@ namespace GymPlanner.WebUI.Controllers
         {
             var plan = await _planRepo.GetAsync(id);
             if (plan == null) return BadRequest();
+            var excfreqList = new List<ExerciseFrequencyDto>();
+            foreach (var pef in plan.planExcersiseFrequencies)
+            {
+                var excfreq = new ExerciseFrequencyDto()
+                {
+                    Description = pef.Description,
+                    ExerciseName = pef.Excersise.Name,
+                    ExerciseId = pef.Excersise.Id,
+                    FrequencyId = pef.FrequencyId,
+                    FrequencyName = pef.Frequency.Name
+                };
+                excfreqList.Add(excfreq);
+            }
             var planDto = new PlanEditDto()
             {
-                Excersises = plan.planExcersiseFrequencies.Select(p => p.Excersise).ToList(),
-                Frequencies = plan.planExcersiseFrequencies.Select(p => p.Frequency).ToList(),
                 PlanId = plan.Id,
-                PlanExcersiseFrequencies = plan.planExcersiseFrequencies.ToList(),
-                UserId = plan.UserId,
+                ExerciseFrequencies = excfreqList,
                 Name = plan.Name
             };
             return View(planDto);
@@ -48,18 +58,17 @@ namespace GymPlanner.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(PlanEditDto planDto)
         {
-            if (ModelState.IsValid)
-            {
-                var plan = new Plan()
-                {
-                    planExcersiseFrequencies = planDto.PlanExcersiseFrequencies,
-                    Id = planDto.PlanId,
-                    UserId = planDto.UserId,
-                    Name = planDto.Name
-                };
-                await _planRepo.UpdateAsync(plan);
-                return RedirectToAction("Index");
-            }
+            //if (ModelState.IsValid)
+            //{
+            //    var plan = new Plan()
+            //    {
+            //        planExcersiseFrequencies = planDto.PlanExcersiseFrequencies,
+            //        Id = planDto.PlanId,
+            //        Name = planDto.Name
+            //    };
+            //    await _planRepo.UpdateAsync(plan);
+            //    return RedirectToAction("Index");
+            //}
             return await Edit(planDto);
         }
         [Authorize]
@@ -75,7 +84,7 @@ namespace GymPlanner.WebUI.Controllers
         public async Task<IActionResult> Create(Plan plan)
         {
             plan.UserId = 1; // На данный момент костыль. Потом нужно будет смотреть через User.Identity кто создает план.
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 await _planRepo.AddAsync(plan);
                 return RedirectToAction("Index");
