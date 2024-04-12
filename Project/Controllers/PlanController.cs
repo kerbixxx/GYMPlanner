@@ -1,4 +1,5 @@
-﻿using GymPlanner.Application.Interfaces.Repositories.Plan;
+﻿using GymPlanner.Application.Interfaces.Repositories;
+using GymPlanner.Application.Interfaces.Repositories.Plan;
 using GymPlanner.Application.Models.Plan;
 using GymPlanner.Domain.Entities.Plans;
 using Microsoft.AspNetCore.Authorization;
@@ -13,12 +14,14 @@ namespace GymPlanner.WebUI.Controllers
         private readonly IPlanExerciseFrequencyRepository _pefRepo;
         private readonly IExerciseRepository _exerciseRepo;
         private readonly IFrequencyRepository _frequencyRepo;
-        public PlanController(IPlanRepository planRepo, IPlanExerciseFrequencyRepository pefRepo, IExerciseRepository exerciseRepo, IFrequencyRepository frequencyRepo)
+        private readonly IUserRepository _userRepo;
+        public PlanController(IPlanRepository planRepo, IPlanExerciseFrequencyRepository pefRepo, IExerciseRepository exerciseRepo, IFrequencyRepository frequencyRepo, IUserRepository userRepo)
         {
             _planRepo = planRepo;
             _pefRepo = pefRepo;
             _exerciseRepo = exerciseRepo;
             _frequencyRepo = frequencyRepo;
+            _userRepo = userRepo;
         }
         public async Task<IActionResult> Index()
         {
@@ -165,7 +168,8 @@ namespace GymPlanner.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Plan plan)
         {
-            plan.UserId = 1; // На данный момент костыль. Потом нужно будет смотреть через User.Identity кто создает план.
+            var user = _userRepo.FindByNameAsync(User.Identity.Name);
+            plan.UserId = user.Id;
             if (ModelState.IsValid)
             {
                 await _planRepo.AddAsync(plan);
