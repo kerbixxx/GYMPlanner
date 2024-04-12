@@ -9,13 +9,15 @@ using System.Reflection;
 namespace GymPlanner.Infrastructure
 {
     public static class DependencyInjection
+    {
+        public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            public static IServiceCollection AddRepositories(this IServiceCollection services)
-            {
-                services.AddScoped<IPlanRepository, PlanRepository>();
-                services.AddScoped<IPlanExerciseFrequencyRepository, PlanExcersiseFrequencyRepository>();
-                services.AddScoped<IUserRepository, UserRepository>();
-                return services;
-            }
+            services.AddScoped<IPlanRepository, PlanRepository>();
+            services.AddScoped<IPlanExerciseFrequencyRepository, PlanExcersiseFrequencyRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IExerciseRepository, ExerciseRepository>();
+            services.AddScoped<IFrequencyRepository, FrequencyRepository>();
+            return services;
         }
     }
+}

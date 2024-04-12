@@ -10,19 +10,27 @@ namespace GymPlanner.Application.Models.Plan
     public class PlanEditDto
     {
         public int PlanId { get; set; }
+        public int UserId { get; set; }
         public string Name { get; set; }
         public List<ExerciseFrequencyDto> ExerciseFrequencies { get; set; }
-        public List<Exercise> Excersises { get; set; }
+        public List<Exercise> Exercises { get; set; }
         public List<Frequency> Frequencies { get; set; }
     }
 
     public class ExerciseFrequencyDto
     {
+        public int Id { get; set; }
         public int ExerciseId { get; set; }
         public int FrequencyId { get; set; }
         public string Description { get; set; }
     }
     public class ExerciseDto
+    {
+        public int PlanId { get; set; }
+        public string Name { get; set; }
+    }    
+    //Могут добавиться изменения, поэтому да, создаю два одинаковых класса, чтобы потом их не создавать. мало ли. Может быть это неправильно.
+    public class FrequencyDto
     {
         public int PlanId { get; set; }
         public string Name { get; set; }

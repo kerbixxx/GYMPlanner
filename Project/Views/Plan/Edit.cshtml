@@ -8,12 +8,28 @@
 <form method="post" asp-action="Edit">
     <div class="border b3">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="PlanId" hidden />
+        <input asp-for="UserId" hidden />
         <div class="row pt-4">
             <div class="col-6">
                 <h2 class="p1-3">Редактирование плана</h2>
             </div>
             <div class="col-6 text-right">
                 <a asp-action="Index" class="btn btn-primary w-50">Назад</a>
+            </div>
+        </div>
+        <br /><br />
+        <div class="row">
+            <div class="col-8">
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Name">Имя плана</label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -27,18 +43,24 @@
                             <td>Упражнения/Дни</td>
                             @for (int i = 0; i < Model.Frequencies.Count; i++)
                             {
+                                <input asp-for="@Model.Frequencies[i].Id" hidden />
                                 <td><input asp-for="@Model.Frequencies[i].Name"></td>
                             }
                         </tr>
                     </thead>
                     <tbody>
-                        @for (int i = 0; i < Model.Excersises.Count; i++)
+                        @for (int i = 0; i < Model.Exercises.Count; i++)
                         {
                             <tr>
-                                <td><input asp-for="@Model.Excersises[i].Name"/></td>
+                                <input asp-for="@Model.Exercises[i].Id" hidden />
+                                <td><input asp-for="@Model.Exercises[i].Name"/></td>
                                 @for(int j = 0; j < Model.Frequencies.Count; j++)
                                 {
-                                    <td><input asp-for="@Model.ExerciseFrequencies[i].Description"/></td>
+                                    int index = j*(Model.Exercises.Count-1)+i;
+                                    <input asp-for="@Model.ExerciseFrequencies[index].ExerciseId" hidden/>
+                                    <input asp-for="@Model.ExerciseFrequencies[index].Id" hidden />
+                                    <input asp-for="@Model.ExerciseFrequencies[index].FrequencyId" hidden />
+                                    <td><input asp-for="@Model.ExerciseFrequencies[index].Description" /></td>
                                 }
                             </tr>
                         }
@@ -68,11 +90,28 @@
 
 @section Scripts{
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function () {
             $('#addRow').click(function () {
-                $.get('/Plan/AddExcersiseModal', function (data) {
-                    $('dialogContent').html(data);
+                var planId = '@Model.PlanId';
+
+                // Вызов метода AddExerciseModal с передачей PlanId
+                $.get('/Plan/AddExerciseModal', { planId: planId }, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#addColumn').click(function () {
+                var planId = '@Model.PlanId';
+
+                // Вызов метода AddExerciseModal с передачей PlanId
+                $.get('/Plan/AddFrequencyModal', { planId: planId }, function (data) {
+                    $('#dialogContent').html(data);
                     $('#modDialog').modal('show');
                 });
             });

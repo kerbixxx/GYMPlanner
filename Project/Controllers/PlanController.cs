@@ -3,6 +3,7 @@ using GymPlanner.Application.Models.Plan;
 using GymPlanner.Domain.Entities.Plans;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography.Xml;
 
 namespace GymPlanner.WebUI.Controllers
 {
@@ -10,10 +11,14 @@ namespace GymPlanner.WebUI.Controllers
     {
         private readonly IPlanRepository _planRepo;
         private readonly IPlanExerciseFrequencyRepository _pefRepo;
-        public PlanController(IPlanRepository planRepo, IPlanExerciseFrequencyRepository pefRepo)
+        private readonly IExerciseRepository _exerciseRepo;
+        private readonly IFrequencyRepository _frequencyRepo;
+        public PlanController(IPlanRepository planRepo, IPlanExerciseFrequencyRepository pefRepo, IExerciseRepository exerciseRepo, IFrequencyRepository frequencyRepo)
         {
             _planRepo = planRepo;
             _pefRepo = pefRepo;
+            _exerciseRepo = exerciseRepo;
+            _frequencyRepo = frequencyRepo;
         }
         public async Task<IActionResult> Index()
         {
@@ -41,6 +46,7 @@ namespace GymPlanner.WebUI.Controllers
                     Description = pef.Description,
                     ExerciseId = pef.Exercise.Id,
                     FrequencyId = pef.FrequencyId,
+                    Id = pef.Id
                 };
                 excfreqList.Add(excfreq);
             }
@@ -49,39 +55,102 @@ namespace GymPlanner.WebUI.Controllers
                 PlanId = plan.Id,
                 ExerciseFrequencies = excfreqList,
                 Name = plan.Name,
-                Excersises = plan.planExersiseFrequencies.Select(pef => pef.Exercise).Distinct().ToList(),
-                Frequencies = plan.planExersiseFrequencies.Select(pef => pef.Frequency).Distinct().ToList()
-        };
+                Exercises = plan.planExersiseFrequencies.Select(pef => pef.Exercise).Distinct().ToList(),
+                Frequencies = plan.planExersiseFrequencies.Select(pef => pef.Frequency).Distinct().ToList(),
+                UserId = plan.UserId
+            };
             return View(planDto);
         }
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Edit(PlanEditDto planDto)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    var plan = new Plan()
-            //    {
-            //        planExcersiseFrequencies = planDto.PlanExcersiseFrequencies,
-            //        Id = planDto.PlanId,
-            //        Name = planDto.Name
-            //    };
-            //    await _planRepo.UpdateAsync(plan);
-            //    return RedirectToAction("Index");
-            //}
+            if (ModelState.IsValid)
+            {
+                var plan = new Plan()
+                {
+                    Id = planDto.PlanId,
+                    Name = planDto.Name,
+                    UserId = planDto.UserId,
+                };
+                await _planRepo.UpdateAsync(plan);
+                foreach(var pef in planDto.ExerciseFrequencies)
+                {
+                    await _pefRepo.UpdateAsync(new PlanExerciseFrequency() { Id = pef.Id,ExerciseId = pef.ExerciseId,PlanId=planDto.PlanId,FrequencyId=pef.FrequencyId,Description=pef.Description});
+                }
+                foreach(var excersise in planDto.Exercises)
+                {
+                    await _exerciseRepo.UpdateAsync(excersise);
+                }
+                foreach (var frequency in planDto.Frequencies)
+                {
+                    await _frequencyRepo.UpdateAsync(frequency);
+                }
+                return RedirectToAction("Index");
+            }
             return await Edit(planDto);
         }
 
-        public IActionResult AddExersiseModal(int planId)
+        public IActionResult AddExerciseModal(int planId)
         {
             var dto = new ExerciseDto() { PlanId = planId, Name = "" };
-            return PartialView("AddExersiseModal",dto);
+            return PartialView("AddExerciseModal",dto);
         }
-        [HttpPost]
-        public async Task<IActionResult> AddExersise(ExerciseDto dto)
-        {
 
-            return View();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddExerсise(ExerciseDto dto)
+        {
+            var plan = await _planRepo.GetAsync(dto.PlanId);
+            Exercise exercise = new() { Name = dto.Name };
+            await _exerciseRepo.AddAsync(exercise);
+            var pefList = new List<PlanExerciseFrequency>();
+            foreach(var freq in plan.planExersiseFrequencies.Select(p => p.FrequencyId).Distinct())
+            {
+                pefList.Add(new PlanExerciseFrequency()
+                {
+                    FrequencyId = freq,
+                    ExerciseId = exercise.Id,
+                    PlanId = plan.Id,
+                    Description = "0"
+                });
+            }
+            foreach(var pef in pefList)
+            {
+                await _pefRepo.AddAsync(pef);
+            }
+            return RedirectToAction("Edit", new { Id = dto.PlanId});
+        }
+
+        public IActionResult AddFrequencyModal(int planId)
+        {
+            var dto = new FrequencyDto() { PlanId = planId, Name = "" };
+            return PartialView("AddFrequencyModal", dto);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddFrequency(FrequencyDto dto)
+        {
+            var plan = await _planRepo.GetAsync(dto.PlanId);
+            Frequency frequency = new() { Name = dto.Name };
+            await _frequencyRepo.AddAsync(frequency);
+            var pefList = new List<PlanExerciseFrequency>();
+            foreach (var exercise in plan.planExersiseFrequencies.Select(p => p.ExerciseId).Distinct())
+            {
+                pefList.Add(new PlanExerciseFrequency()
+                {
+                    FrequencyId = frequency.Id,
+                    ExerciseId = exercise,
+                    PlanId = plan.Id,
+                    Description = "0"
+                });
+            }
+            foreach (var pef in pefList)
+            {
+                await _pefRepo.AddAsync(pef);
+            }
+            return RedirectToAction("Edit", new { Id = dto.PlanId });
         }
 
         [Authorize]
