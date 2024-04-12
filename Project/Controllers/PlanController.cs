@@ -1,4 +1,4 @@
-﻿using GymPlanner.Application.Interfaces.Repositories;
+﻿using GymPlanner.Application.Interfaces.Repositories.Plan;
 using GymPlanner.Application.Models.Plan;
 using GymPlanner.Domain.Entities.Plans;
 using Microsoft.AspNetCore.Authorization;

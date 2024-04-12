@@ -1,4 +1,4 @@
-﻿using GymPlanner.Application.Interfaces.Repositories;
+﻿using GymPlanner.Application.Interfaces.Repositories.Plan;
 using GymPlanner.Domain.Entities.Plans;
 using GymPlanner.Infrastructure.Contexts;
 using System;
@@ -7,12 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GymPlanner.Infrastructure.Repositories
+namespace GymPlanner.Infrastructure.Repositories.Plan
 {
     public class PlanExcersiseFrequencyRepository : Repository<PlanExcersiseFrequency>, IPlanExcersiseFrequencyRepository
     {
         private readonly PlanDbContext _db;
-        public PlanExcersiseFrequencyRepository(PlanDbContext db) : base(db) 
+        public PlanExcersiseFrequencyRepository(PlanDbContext db) : base(db)
         {
             _db = db;
         }

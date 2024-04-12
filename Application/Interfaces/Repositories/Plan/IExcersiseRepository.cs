@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GymPlanner.Application.Interfaces.Repositories
+namespace GymPlanner.Application.Interfaces.Repositories.Plan
 {
-    public interface IPlanExcersiseFrequencyRepository : IRepository<PlanExcersiseFrequency>
+    public interface IExcersiseRepository : IRepository<Excersise>
     {
     }
 }
