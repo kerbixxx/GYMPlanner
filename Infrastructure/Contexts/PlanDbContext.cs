@@ -14,9 +14,9 @@ namespace GymPlanner.Infrastructure.Contexts
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Plan> Plans { get; set; }
-        public DbSet<Excersise> Excersises { get; set; }
+        public DbSet<Exercise> Excersises { get; set; }
         public DbSet<Frequency> Frequencies { get; set; }
-        public DbSet<PlanExcersiseFrequency> PlanExcersiseFrequencys { get;set; }
+        public DbSet<PlanExerciseFrequency> PlanExcersiseFrequencys { get;set; }
 
         public PlanDbContext(DbContextOptions<PlanDbContext> options) : base(options) { }
 
@@ -38,8 +38,8 @@ namespace GymPlanner.Infrastructure.Contexts
             modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
             modelBuilder.Entity<User>().HasData(new User[] { adminUser });
 
-            modelBuilder.Entity<PlanExcersiseFrequency>()
-                .HasKey(k => new { k.PlanId, k.FrequencyId, k.ExcersiseId, k.Id });
+            modelBuilder.Entity<PlanExerciseFrequency>()
+                .HasKey(k => new { k.PlanId, k.FrequencyId, k.ExerciseId, k.Id });
 
             modelBuilder.Entity<Plan>()
                 .HasKey(k => k.Id);
@@ -49,10 +49,10 @@ namespace GymPlanner.Infrastructure.Contexts
                 .HasMaxLength(400)
                 .IsRequired();
 
-            modelBuilder.Entity<Excersise>()
+            modelBuilder.Entity<Exercise>()
                 .HasKey(k => k.Id);
 
-            modelBuilder.Entity<Excersise>()
+            modelBuilder.Entity<Exercise>()
                 .Property(e => e.Name)
                 .HasMaxLength(400)
                 .IsRequired();
@@ -65,29 +65,29 @@ namespace GymPlanner.Infrastructure.Contexts
                 .HasMaxLength(30)
                 .IsRequired();
 
-            modelBuilder.Entity<PlanExcersiseFrequency>()
+            modelBuilder.Entity<PlanExerciseFrequency>()
                 .HasOne(p => p.Plan)
-                .WithMany(p => p.planExcersiseFrequencies);
+                .WithMany(p => p.planExersiseFrequencies);
 
-            modelBuilder.Entity<PlanExcersiseFrequency>()
+            modelBuilder.Entity<PlanExerciseFrequency>()
                 .Property(pef => pef.Description)
                 .HasMaxLength(60);
 
-            modelBuilder.Entity<PlanExcersiseFrequency>()
+            modelBuilder.Entity<PlanExerciseFrequency>()
                 .Property(pef => pef.Id)
                 .ValueGeneratedOnAdd();
 
             Plan plan = new() { Id = 1, Name = "План 1", UserId = 1 };
             modelBuilder.Entity<Plan>().HasData(plan);
 
-            Excersise excersise = new() { Id = 1, Name = "Упражнение 1" };
-            modelBuilder.Entity<Excersise>().HasData(excersise);
+            Exercise excersise = new() { Id = 1, Name = "Упражнение 1" };
+            modelBuilder.Entity<Exercise>().HasData(excersise);
 
             Frequency frequency = new() { Id = 1, Name = "Частота 1" };
             modelBuilder.Entity<Frequency>().HasData(frequency);
 
-            PlanExcersiseFrequency pef = new() { Id = 1, PlanId = 1, ExcersiseId = 1, FrequencyId = 1, Description = "15" };
-            modelBuilder.Entity<PlanExcersiseFrequency>().HasData(pef);
+            PlanExerciseFrequency pef = new() { Id = 1, PlanId = 1, ExerciseId = 1, FrequencyId = 1, Description = "15" };
+            modelBuilder.Entity<PlanExerciseFrequency>().HasData(pef);
         }
     }
 }

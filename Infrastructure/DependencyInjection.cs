@@ -13,7 +13,7 @@ namespace GymPlanner.Infrastructure
             public static IServiceCollection AddRepositories(this IServiceCollection services)
             {
                 services.AddScoped<IPlanRepository, PlanRepository>();
-                services.AddScoped<IPlanExcersiseFrequencyRepository, PlanExcersiseFrequencyRepository>();
+                services.AddScoped<IPlanExerciseFrequencyRepository, PlanExcersiseFrequencyRepository>();
                 services.AddScoped<IUserRepository, UserRepository>();
                 return services;
             }

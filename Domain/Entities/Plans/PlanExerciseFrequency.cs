@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GymPlanner.Domain.Entities.Plans
 {
-    public class PlanExcersiseFrequency : BaseEntity
+    public class PlanExerciseFrequency : BaseEntity
     {
         public int PlanId { get; set; }
         public Plan? Plan { get; set; }
@@ -14,8 +14,8 @@ namespace GymPlanner.Domain.Entities.Plans
         public int FrequencyId { get; set; }
         public Frequency? Frequency { get; set; }
 
-        public int ExcersiseId { get; set; }
-        public Excersise? Excersise { get; set; }
+        public int ExerciseId { get; set; }
+        public Exercise? Exercise { get; set; }
 
         public string Description { get; set; }
     }

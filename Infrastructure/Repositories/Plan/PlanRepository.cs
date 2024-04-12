@@ -15,10 +15,10 @@ namespace GymPlanner.Infrastructure.Repositories.Plan
 
         public override async Task<Domain.Entities.Plans.Plan> GetAsync(int id)
         {
-            return await _db.Plans.Include(p => p.planExcersiseFrequencies)
+            return await _db.Plans.Include(p => p.planExersiseFrequencies)
                     .ThenInclude(p => p.Frequency)
-                .Include(p => p.planExcersiseFrequencies)
-                    .ThenInclude(p => p.Excersise).
+                .Include(p => p.planExersiseFrequencies)
+                    .ThenInclude(p => p.Exercise).
                 FirstOrDefaultAsync(p => p.Id == id);
         }
 

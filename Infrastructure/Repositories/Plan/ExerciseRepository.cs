@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace GymPlanner.Infrastructure.Repositories.Plan
 {
-    public class ExcersiseRepository : Repository<Excersise>, IExcersiseRepository
+    public class ExerciseRepository : Repository<Exercise>, IExerciseRepository
     {
         private readonly PlanDbContext _db;
-        public ExcersiseRepository(PlanDbContext db) : base(db)
+        public ExerciseRepository(PlanDbContext db) : base(db)
         {
             _db = db;
         }

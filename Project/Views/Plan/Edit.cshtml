@@ -1,6 +1,10 @@
 ﻿@using GymPlanner.Application.Models.Plan;
 @model PlanEditDto
 
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
 <form method="post" asp-action="Edit">
     <div class="border b3">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -21,18 +25,21 @@
                     <thead>
                         <tr>
                             <td>Упражнения/Дни</td>
-                            @for (int i = 0; i < Model.ExerciseFrequencies.Count; i++)
+                            @for (int i = 0; i < Model.Frequencies.Count; i++)
                             {
-                                <td>@Model.ExerciseFrequencies[i].FrequencyName</td>
+                                <td><input asp-for="@Model.Frequencies[i].Name"></td>
                             }
                         </tr>
                     </thead>
                     <tbody>
-                        @for (int i = 0; i < Model.ExerciseFrequencies.Count; i++)
+                        @for (int i = 0; i < Model.Excersises.Count; i++)
                         {
                             <tr>
-                                <td>@Model.ExerciseFrequencies[i].ExerciseName</td>
-                                <td><input asp-for="@Model.ExerciseFrequencies[i].Description" /></td>
+                                <td><input asp-for="@Model.Excersises[i].Name"/></td>
+                                @for(int j = 0; j < Model.Frequencies.Count; j++)
+                                {
+                                    <td><input asp-for="@Model.ExerciseFrequencies[i].Description"/></td>
+                                }
                             </tr>
                         }
                     </tbody>
@@ -60,38 +67,14 @@
 </form>
 
 @section Scripts{
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var addRowButton = document.getElementById('addRow');
-            var addColumnButton = document.getElementById('addColumn');
-            var table = document.querySelector('.table');
-            var rowCount = table.rows.length;
-            var columnCount = table.rows[0].cells.length;
-
-            addRowButton.addEventListener('click', function () {
-                var newRow = table.insertRow(-1);
-                var newCell = newRow.insertCell(0);
-                newCell.innerHTML = '<input placeholder="Упражнение" name="ExerciseFrequencies[' + (rowCount - 1) + '].ExerciseName" />';
-
-                for (var i = 1; i < columnCount; i++) {
-                    var newCell = newRow.insertCell(i);
-                    newCell.innerHTML = '<input type="text" placeholder="Описание" name="ExerciseFrequencies[' + ((i - 1) + ((rowCount - 1) * (columnCount - 1))) + '].Description" />';
-                }
-
-                rowCount++;
-            });
-
-            addColumnButton.addEventListener('click', function () {
-                var headerRow = table.rows[0];
-                var newHeaderCell = headerRow.insertCell(-1);
-                newHeaderCell.innerHTML = '<input type="text" placeholder="Частота" name="ExerciseFrequencies[' + (columnCount - 1) + '].FrequencyName" />';
-
-                for (var i = 1; i < rowCount; i++) {
-                    var newCell = table.rows[i].insertCell(-1);
-                    newCell.innerHTML = '<input type="text" placeholder="Описание" name="ExerciseFrequencies[' + ((i - 1) + ((rowCount - 1) * (columnCount - 1))) + '].Description" />';
-                }
-
-                columnCount++;
+        $(document).ready(function () {
+            $('#addRow').click(function () {
+                $.get('/Plan/AddExcersiseModal', function (data) {
+                    $('dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
             });
         });
     </script>

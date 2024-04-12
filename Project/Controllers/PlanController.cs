@@ -9,8 +9,8 @@ namespace GymPlanner.WebUI.Controllers
     public class PlanController : Controller
     {
         private readonly IPlanRepository _planRepo;
-        private readonly IPlanExcersiseFrequencyRepository _pefRepo;
-        public PlanController(IPlanRepository planRepo, IPlanExcersiseFrequencyRepository pefRepo)
+        private readonly IPlanExerciseFrequencyRepository _pefRepo;
+        public PlanController(IPlanRepository planRepo, IPlanExerciseFrequencyRepository pefRepo)
         {
             _planRepo = planRepo;
             _pefRepo = pefRepo;
@@ -34,15 +34,13 @@ namespace GymPlanner.WebUI.Controllers
             var plan = await _planRepo.GetAsync(id);
             if (plan == null) return BadRequest();
             var excfreqList = new List<ExerciseFrequencyDto>();
-            foreach (var pef in plan.planExcersiseFrequencies)
+            foreach (var pef in plan.planExersiseFrequencies)
             {
                 var excfreq = new ExerciseFrequencyDto()
                 {
                     Description = pef.Description,
-                    ExerciseName = pef.Excersise.Name,
-                    ExerciseId = pef.Excersise.Id,
+                    ExerciseId = pef.Exercise.Id,
                     FrequencyId = pef.FrequencyId,
-                    FrequencyName = pef.Frequency.Name
                 };
                 excfreqList.Add(excfreq);
             }
@@ -50,8 +48,10 @@ namespace GymPlanner.WebUI.Controllers
             {
                 PlanId = plan.Id,
                 ExerciseFrequencies = excfreqList,
-                Name = plan.Name
-            };
+                Name = plan.Name,
+                Excersises = plan.planExersiseFrequencies.Select(pef => pef.Exercise).Distinct().ToList(),
+                Frequencies = plan.planExersiseFrequencies.Select(pef => pef.Frequency).Distinct().ToList()
+        };
             return View(planDto);
         }
         [Authorize]
@@ -71,6 +71,19 @@ namespace GymPlanner.WebUI.Controllers
             //}
             return await Edit(planDto);
         }
+
+        public IActionResult AddExersiseModal(int planId)
+        {
+            var dto = new ExerciseDto() { PlanId = planId, Name = "" };
+            return PartialView("AddExersiseModal",dto);
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddExersise(ExerciseDto dto)
+        {
+
+            return View();
+        }
+
         [Authorize]
         public IActionResult Create()
         {
@@ -95,14 +108,14 @@ namespace GymPlanner.WebUI.Controllers
         [HttpPost]
         public IActionResult CalculateAdjacentCells(Plan model)
         {
-            var frequencies = model.planExcersiseFrequencies.Select(p => p.Frequency).ToList();
-            var excersises = model.planExcersiseFrequencies.Select(p => p.Excersise).ToList();
-            List<PlanExcersiseFrequency> pefList = new();
+            var frequencies = model.planExersiseFrequencies.Select(p => p.Frequency).ToList();
+            var excersises = model.planExersiseFrequencies.Select(p => p.Exercise).ToList();
+            List<PlanExerciseFrequency> pefList = new();
             for (int i = 0; i < frequencies.Count(); i++)
             {
                 for (int j = 0; j < excersises.Count(); j++)
                 {
-                    var pef = model.planExcersiseFrequencies.FirstOrDefault(pef => pef.Frequency == frequencies[i] && pef.Excersise == excersises[j]);
+                    var pef = model.planExersiseFrequencies.FirstOrDefault(pef => pef.Frequency == frequencies[i] && pef.Exercise == excersises[j]);
                     if (pef == null)
                         pefList.Add(new()
                         {
@@ -110,8 +123,8 @@ namespace GymPlanner.WebUI.Controllers
                             PlanId = model.Id,
                             Frequency = frequencies[i],
                             FrequencyId = frequencies[i].Id,
-                            Excersise = excersises[j],
-                            ExcersiseId = excersises[j].Id,
+                            Exercise = excersises[j],
+                            ExerciseId = excersises[j].Id,
                             Description = "0"
                         });
                     else pefList.Add(pef);
