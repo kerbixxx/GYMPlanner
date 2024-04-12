@@ -3,6 +3,7 @@ using GymPlanner.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymPlanner.Infrastructure.Migrations
 {
     [DbContext(typeof(PlanDbContext))]
-    partial class PlanDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240412073739_fixtypo")]
+    partial class fixtypo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,7 +103,7 @@ namespace GymPlanner.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Exercises");
+                    b.ToTable("Excersises");
 
                     b.HasData(
                         new
@@ -194,7 +197,7 @@ namespace GymPlanner.Infrastructure.Migrations
 
                     b.HasIndex("FrequencyId");
 
-                    b.ToTable("PlanExerciseFrequencies");
+                    b.ToTable("PlanExcersiseFrequencys");
 
                     b.HasData(
                         new

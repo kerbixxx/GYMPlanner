@@ -14,9 +14,9 @@ namespace GymPlanner.Infrastructure.Contexts
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Plan> Plans { get; set; }
-        public DbSet<Exercise> Excersises { get; set; }
+        public DbSet<Exercise> Exercises { get; set; }
         public DbSet<Frequency> Frequencies { get; set; }
-        public DbSet<PlanExerciseFrequency> PlanExcersiseFrequencys { get;set; }
+        public DbSet<PlanExerciseFrequency> PlanExerciseFrequencies { get;set; }
 
         public PlanDbContext(DbContextOptions<PlanDbContext> options) : base(options) { }
 
