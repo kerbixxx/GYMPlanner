@@ -126,6 +126,7 @@
         $(document).ready(function () {
             $('.delete-column').click(function () {
                 var frequencyId = $(this).data('frequency-id');
+                var planId = '@Model.PlanId'
 
                 $.ajax({
                     url: '/Plan/DeleteFrequency',
@@ -133,7 +134,7 @@
                     data: { frequencyId: frequencyId },
                     success: function (response) {
                         console.log('Frequency successfully deleted');
-                        window.location.href = '/Plan/Edit/' + response.planId;
+                        window.location.href = '/Plan/Edit/' + planId;
 
                     },
                     error: function (xhr, status, error) {
@@ -144,6 +145,7 @@
 
             $('.delete-row').click(function () {
                 var exerciseId = $(this).data('exercise-id');
+                var planId = '@Model.PlanId'
 
                 $.ajax({
                     url: '/Plan/DeleteExercise',
@@ -151,7 +153,7 @@
                     data: { exerciseId: exerciseId },
                     success: function (response) {
                         console.log('Exercise successfully deleted');
-                        window.location.href = '/Plan/Edit/' + response.planId;
+                        window.location.href = '/Plan/Edit/' + planId;
 
                     },
                     error: function (xhr, status, error) {

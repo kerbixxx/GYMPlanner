@@ -21,6 +21,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddRepositories();
+builder.Services.AddCustomServices();
 builder.Services.AddApplication();
 
 var app = builder.Build();
