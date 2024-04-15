@@ -261,6 +261,14 @@ namespace GymPlanner.WebUI.Controllers
             return Json(new { success = true, planId = planId });
         }
 
+        [HttpDelete]
+        public async Task<IActionResult> DeletePlan(int planId)
+        {
+            var plan = await _planRepo.GetAsync(planId);
+            await _planRepo.RemoveAsync(plan);
+            return Json(new { success = true });
+        }
+
         [Authorize]
         [HttpPost]
         public IActionResult CalculateAdjacentCells(Plan model)
