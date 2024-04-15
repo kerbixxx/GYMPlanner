@@ -1,7 +1,7 @@
-﻿@using GymPlanner.Domain.Entities.Plans;
-@model Plan
+﻿@using GymPlanner.Application.Models.Plan;
+@model PlanEditDto
 
-<div class="border p3">
+<div class="border b3">
     <div class="row pt-4">
         <div class="col-6">
             <h2 class="p1-3">@Model.Name</h2>
@@ -10,7 +10,8 @@
             <a asp-action="Index" class="btn btn-primary w-50">Назад</a>
         </div>
     </div>
-    @if (Model.planExersiseFrequencies.Count > 0)
+    <br /><br />
+    @if (Model.ExerciseFrequencies.Count > 0)
     {
         <div class="row">
             <div class="col-16">
@@ -18,20 +19,22 @@
                     <thead>
                         <tr>
                             <td>Упражнения/Дни</td>
-                            @for (int i = 0; i < Model.planExersiseFrequencies.Count; i++)
+                            @for (int i = 0; i < Model.Frequencies.Count; i++)
                             {
-                                <td>@Model.planExersiseFrequencies[i].Frequency.Name</td>
+
+                                <td>@Model.Frequencies[i].Name</td>
                             }
                         </tr>
                     </thead>
                     <tbody>
-                        @for (int i = 0; i < Model.planExersiseFrequencies.Count; i++)
+                        @for (int i = 0; i < Model.Exercises.Count; i++)
                         {
                             <tr>
-                                <td>@Model.planExersiseFrequencies[i].Exercise.Name</td>
-                                @for (int j = 0; j < Model.planExersiseFrequencies.Count; j++)
+                                <td>@Model.Exercises[i].Name</td>
+                                @for (int j = 0; j < Model.Frequencies.Count; j++)
                                 {
-                                    <td>@Model.planExersiseFrequencies[j].Description</td>
+                                    int index = j * (Model.Exercises.Count) + i;
+                                    <td>@Model.ExerciseFrequencies[index].Description</td>
                                 }
                             </tr>
                         }

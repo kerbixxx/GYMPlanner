@@ -34,7 +34,28 @@ namespace GymPlanner.WebUI.Controllers
         {
             var plan = await _planRepo.GetAsync(id);
             if (plan == null) return BadRequest();
-            return View(plan);
+            var excfreqList = new List<ExerciseFrequencyDto>();
+            foreach (var pef in plan.planExersiseFrequencies)
+            {
+                var excfreq = new ExerciseFrequencyDto()
+                {
+                    Description = pef.Description,
+                    ExerciseId = pef.Exercise.Id,
+                    FrequencyId = pef.FrequencyId,
+                    Id = pef.Id
+                };
+                excfreqList.Add(excfreq);
+            }
+            var planDto = new PlanEditDto()
+            {
+                PlanId = plan.Id,
+                ExerciseFrequencies = excfreqList,
+                Name = plan.Name,
+                Exercises = plan.planExersiseFrequencies.Select(pef => pef.Exercise).Distinct().ToList(),
+                Frequencies = plan.planExersiseFrequencies.Select(pef => pef.Frequency).Distinct().ToList(),
+                UserId = plan.UserId
+            };
+            return View(planDto);
         }
 
         [Authorize]
