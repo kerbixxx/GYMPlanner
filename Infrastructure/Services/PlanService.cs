@@ -13,6 +13,10 @@ namespace GymPlanner.Infrastructure.Services
 {
     public class PlanService : IPlanService
     {
+        private const string DEFAULT_EXERCISE_NAME = "Упражнение 1";
+        private const string DEFAULT_FREQUENCY_NAME = "Частота 1";
+        private const string DEFAULT_DESCRIPTION = "0";
+
         private readonly IPlanRepository _planRepo;
         private readonly IPlanExerciseFrequencyRepository _pefRepo;
         private readonly IExerciseRepository _exerciseRepo;
@@ -30,11 +34,11 @@ namespace GymPlanner.Infrastructure.Services
             await _planRepo.AddAsync(plan);
             Exercise exercise = new()
             {
-                Name = "Упражнение 1"
+                Name = DEFAULT_EXERCISE_NAME
             };
             Frequency frequency = new()
             {
-                Name = "Частота 1"
+                Name = DEFAULT_FREQUENCY_NAME
             };
             await _exerciseRepo.AddAsync(exercise);
             await _frequencyRepo.AddAsync(frequency);
@@ -43,7 +47,7 @@ namespace GymPlanner.Infrastructure.Services
                 PlanId = plan.Id,
                 FrequencyId = frequency.Id,
                 ExerciseId = exercise.Id,
-                Description = "0"
+                Description = DEFAULT_DESCRIPTION
             };
             await _pefRepo.AddAsync(pef);
         }
@@ -94,7 +98,7 @@ namespace GymPlanner.Infrastructure.Services
                     FrequencyId = freq,
                     ExerciseId = exercise.Id,
                     PlanId = plan.Id,
-                    Description = "0"
+                    Description = DEFAULT_DESCRIPTION
                 });
             }
             foreach (var pef in pefList)
@@ -116,7 +120,7 @@ namespace GymPlanner.Infrastructure.Services
                     FrequencyId = frequency.Id,
                     ExerciseId = exercise,
                     PlanId = plan.Id,
-                    Description = "0"
+                    Description = DEFAULT_DESCRIPTION
                 });
             }
             foreach (var pef in pefList)
@@ -177,11 +181,11 @@ namespace GymPlanner.Infrastructure.Services
             {
                 Exercise exercise = new()
                 {
-                    Name = "Упражнение 1"
+                    Name = DEFAULT_EXERCISE_NAME
                 };
                 Frequency frequency = new()
                 {
-                    Name = "Частота 1"
+                    Name = DEFAULT_FREQUENCY_NAME
                 };
                 await _exerciseRepo.AddAsync(exercise);
                 await _frequencyRepo.AddAsync(frequency);
@@ -190,7 +194,7 @@ namespace GymPlanner.Infrastructure.Services
                     PlanId = plan.Id,
                     FrequencyId = frequency.Id,
                     ExerciseId = exercise.Id,
-                    Description = "0"
+                    Description = DEFAULT_DESCRIPTION
                 };
                 await _pefRepo.AddAsync(pef);
             }
