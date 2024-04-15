@@ -47,7 +47,7 @@
                                 <td>
                                     <input asp-for="@Model.Frequencies[i].Id" hidden />
                                     <input asp-for="@Model.Frequencies[i].Name">
-                                    <button id="deleteColumn" type="button" class="btn btn-danger btn-sm delete-button" data-frequency-id="@Model.Frequencies[i].Id">X</button>
+                                    <button class="btn btn-danger btn-sm delete-button delete-column" data-frequency-id="@Model.Frequencies[i].Id">X</button>
                                 </td>
                             }
                         </tr>
@@ -59,7 +59,7 @@
                                 <td>
                                     <input asp-for="@Model.Exercises[i].Id" hidden />
                                     <input asp-for="@Model.Exercises[i].Name"/>
-                                    <button id="deleteRow" type="button" class="btn btn-danger btn-sm delete-button" data-exercise-id="@Model.Exercises[i].Id">X</button>
+                                    <button class="btn btn-danger btn-sm delete-button delete-row" data-exercise-id="@Model.Exercises[i].Id">X</button>
                                 </td>
                                 @for(int j = 0; j < Model.Frequencies.Count; j++)
                                 {
@@ -124,7 +124,7 @@
     </script>
     <script>
         $(document).ready(function () {
-            $('#deleteColumn').click(function () {
+            $('.delete-column').click(function () {
                 var frequencyId = $(this).data('frequency-id');
 
                 $.ajax({
@@ -133,6 +133,8 @@
                     data: { frequencyId: frequencyId },
                     success: function (response) {
                         console.log('Frequency successfully deleted');
+                        window.location.href = '/Plan/Edit/' + response.planId;
+
                     },
                     error: function (xhr, status, error) {
                         console.error('Error deleting frequency:', error);
@@ -140,7 +142,7 @@
                 });
             });
 
-            $('#deleteRow').click(function () {
+            $('.delete-row').click(function () {
                 var exerciseId = $(this).data('exercise-id');
 
                 $.ajax({
@@ -149,6 +151,8 @@
                     data: { exerciseId: exerciseId },
                     success: function (response) {
                         console.log('Exercise successfully deleted');
+                        window.location.href = '/Plan/Edit/' + response.planId;
+
                     },
                     error: function (xhr, status, error) {
                         console.error('Error deleting exercise:', error);
@@ -156,5 +160,6 @@
                 });
             });
         });
+
     </script>
 }

@@ -4,6 +4,7 @@ using GymPlanner.Application.Models.Plan;
 using GymPlanner.Domain.Entities.Plans;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using System.Security.Cryptography.Xml;
 
@@ -106,7 +107,6 @@ namespace GymPlanner.WebUI.Controllers
                 };
                 await _pefRepo.AddAsync(pef);
             }
-
             return View(planDto);
         }
         [Authorize]
@@ -245,11 +245,12 @@ namespace GymPlanner.WebUI.Controllers
         public async Task<IActionResult> DeleteFrequency(int frequencyId)
         {
             var frequency = await _frequencyRepo.GetAsync(frequencyId);
-            var pef = _pefRepo.FirstOrDefault(pef=>pef.FrequencyId == frequencyId);
+            var pef = _pefRepo.FirstOrDefault(pef => pef.FrequencyId == frequencyId);
             var planId = pef.PlanId;
             await _frequencyRepo.RemoveAsync(frequency);
-            return RedirectToAction("Edit", new { Id = planId });
+            return Json(new { success = true, planId = planId });
         }
+
         [HttpDelete]
         public async Task<IActionResult> DeleteExercise(int exerciseId)
         {
@@ -257,7 +258,7 @@ namespace GymPlanner.WebUI.Controllers
             var pef = _pefRepo.FirstOrDefault(pef=>pef.ExerciseId == exerciseId);
             var planId = pef.PlanId;
             await _exerciseRepo.RemoveAsync(exercise);
-            return RedirectToAction("Edit",new { Id = planId });
+            return Json(new { success = true, planId = planId });
         }
 
         [Authorize]
