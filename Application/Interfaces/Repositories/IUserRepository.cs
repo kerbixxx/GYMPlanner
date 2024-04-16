@@ -10,6 +10,7 @@ namespace GymPlanner.Application.Interfaces.Repositories
     public interface IUserRepository : IRepository<User>
     {
         Task<List<User>> GetAllUsersAsync();
-        Task<User> FindByNameAsync(string name);
+        Task<User> FindByNameAsync(string? name);
+        Task<User> GetProfileAsync(int? id);
     }
 }

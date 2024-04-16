@@ -1,10 +1,4 @@
-﻿<div id="loginBlock">
-    Введите логин:<br />
-    <input id="userName" type="text" />
-    <input id="loginBtn" type="button" value="Войти" />
-</div>
-<br />
-
+﻿
 <div id="header"></div>
 <br />
 
@@ -24,7 +18,7 @@
             .withUrl("/chat")
             .build();
 
-        let userName = '';
+        let userName = '@User.Identity.Name';
         // получение сообщения от сервера
         hubConnection.on('Send', function (message, userName) {
 
@@ -42,11 +36,6 @@
 
         });
 
-        // установка имени пользователя
-        document.getElementById("loginBtn").addEventListener("click", function (e) {
-            userName = document.getElementById("userName").value;
-            document.getElementById("header").innerHTML = '<h3>Welcome ' + userName + '</h3>';
-        });
         // отправка сообщения на сервер
         document.getElementById("sendBtn").addEventListener("click", function (e) {
             let message = document.getElementById("message").value;
