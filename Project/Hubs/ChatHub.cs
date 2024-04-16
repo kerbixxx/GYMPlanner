@@ -8,5 +8,9 @@ namespace GymPlanner.WebUI.Hubs
         {
             await Clients.All.SendAsync("Send", message, userName);
         }
+        public string GetConnectionId()
+        {
+            return Context.ConnectionId;
+        }
     }
 }

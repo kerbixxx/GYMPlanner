@@ -12,11 +12,20 @@
 @section Scripts{
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.7/signalr.min.js"></script>
-    <script src="https://unpkg.com/microsoft/signalr@3.1.0/dist/browser/signalr.min.js"></script>
     <script>
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl("/chat")
             .build();
+
+        hubConnection.start().then(function () {
+            console.log("connected");
+
+            hubConnection.invoke('getConnectionId')
+                .then(function (connectionId) {
+                    sessionStorage.setItem('connectionId', connectionId);
+                }).catch(err => console.error(err.toString()));
+        });
+
 
         let userName = '@User.Identity.Name';
         // получение сообщения от сервера
@@ -41,8 +50,6 @@
             let message = document.getElementById("message").value;
             hubConnection.invoke("Send", message, userName);
         });
-
-        hubConnection.start();
     </script>
 }
 @* https://metanit.com/sharp/aspnet5/30.1.php *@

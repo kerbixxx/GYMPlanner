@@ -7,7 +7,7 @@
             <h2 class="text-primary">Профиль: @Model.Name</h2>
         </div>
         <div class="col-6 text-right">
-            <a asp-action="GoToChat" class="btn btn-primary">Написать сообщение</a>
+            <a asp-controller="Chat" asp-action="Index" class="btn btn-primary">Написать сообщение</a>
         </div>
     </div>
 
@@ -28,9 +28,9 @@
                         <td class="text-center">
                             <div class="w-100 btn-group" role="group">
                                 <a asp-route-Id="@plan.Id" asp-controller="Plan" asp-action="Details" class="btn btn-primary mx-2">Просмотр</a>
-                                @if(User.Identity.Name == Model.Name)
+                                @if(User.Identity.Name == Model.Name || User.IsInRole("admin"))
                                 {
-                                    <a asp-route-id="@plan.Id" asp-action="Edit" class="btn btn-warning mx-2">Редактировать</a>
+                                    <a asp-route-id="@plan.Id" asp-controller="Plan" asp-action="Edit" class="btn btn-warning mx-2">Редактировать</a>
                                     <button class="btn btn-danger delete-plan" data-plan-id="@plan.Id">Удалить</button>
                                 }
                             </div>

@@ -45,7 +45,7 @@ namespace GymPlanner.WebUI.Controllers
             if (ModelState.IsValid)
             {
                 await _planService.UpdatePlanAsync(planDto);
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Profile", new { Id = planDto.UserId });
             }
             return await Edit(planDto);
         }
