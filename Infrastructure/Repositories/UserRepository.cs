@@ -18,15 +18,21 @@ namespace GymPlanner.Infrastructure.Repositories
             _db = db;
         }
 
-        public async Task<User> FindByNameAsync(string name)
+        public async Task<User> FindByNameAsync(string? name)
         {
-            return await _db.Users.FirstOrDefaultAsync(u => u.Email == name);
+            return await _db.Users.Include(p=>p.Plans)
+                .FirstOrDefaultAsync(u => u.Email == name);
         }
 
         public async Task<List<User>> GetAllUsersAsync()
         {
             return await _db.Users.
                 Include(u=>u.Role).ToListAsync();
+        }
+        public async Task<User> GetProfileAsync(int? id)
+        {
+             return await _db.Users.Include(p=>p.Plans)
+                .FirstOrDefaultAsync(p=>p.Id==id);
         }
     }
 }

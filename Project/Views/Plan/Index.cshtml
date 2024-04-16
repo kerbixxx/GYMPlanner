@@ -29,9 +29,8 @@
                         <td width="30%">@plan.Name</td>
                         <td class="text-center">
                             <div class="w-100 btn-group" role="group">
-                                <a asp-route-id="@plan.Id" asp-action="Edit" class="btn btn-warning mx-2">Редактировать</a>
                                 <a asp-route-Id="@plan.Id" asp-action="Details" class="btn btn-primary mx-2">Просмотр</a>
-                                <button class="btn btn-danger delete-plan" data-plan-id="@plan.Id">Удалить</button>
+                                <a asp-route-Id="@plan.UserId" asp-controller="Profile" asp-action="Index" class="btn btn-primary mx-2">В профиль автора</a>
                             </div>
                         </td>
                     </tr>
@@ -39,31 +38,4 @@
             </tbody>
         </table>
     }
-
 </div>
-
-@section Scripts
-{
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('.delete-plan').click(function () {
-                var planId = $(this).data('plan-id');
-
-                $.ajax({
-                    url: '/Plan/DeletePlan',
-                    type: 'DELETE',
-                    data: { planId: planId},
-                    success: function (response) {
-                        console.log('Plan successfully deleted');
-                        window.location.href = '/Plan/Index';
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error deleting plan:', error);
-                    }
-                });
-            });
-        });
-    </script>
-}

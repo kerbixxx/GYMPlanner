@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using GymPlanner.Infrastructure;
 using GymPlanner.Application;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.SignalR;
+using GymPlanner.WebUI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = new PathString("/Account/Login");
         options.AccessDeniedPath = new PathString("/Account/Login");
     });
+
+builder.Services.AddSignalR();
 
 builder.Services.AddRepositories();
 builder.Services.AddCustomServices();
@@ -41,6 +45,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHub<ChatHub>("/chat");
 
 app.MapControllerRoute(
     name: "default",

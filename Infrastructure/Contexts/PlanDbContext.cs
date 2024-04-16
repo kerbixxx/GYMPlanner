@@ -1,4 +1,5 @@
-﻿using GymPlanner.Domain.Entities.Identity;
+﻿using GymPlanner.Domain.Entities.Chat;
+using GymPlanner.Domain.Entities.Identity;
 using GymPlanner.Domain.Entities.Plans;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -17,6 +18,8 @@ namespace GymPlanner.Infrastructure.Contexts
         public DbSet<Exercise> Exercises { get; set; }
         public DbSet<Frequency> Frequencies { get; set; }
         public DbSet<PlanExerciseFrequency> PlanExerciseFrequencies { get;set; }
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         public PlanDbContext(DbContextOptions<PlanDbContext> options) : base(options) { }
 
@@ -37,6 +40,18 @@ namespace GymPlanner.Infrastructure.Contexts
 
             modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
             modelBuilder.Entity<User>().HasData(new User[] { adminUser });
+
+            modelBuilder.Entity<Chat>().HasKey(k => k.Id);
+            modelBuilder.Entity<Message>().HasKey(k => k.Id);
+
+            modelBuilder.Entity<Chat>()
+                .HasMany(c => c.Messages)
+                .WithOne() 
+                .OnDelete(DeleteBehavior.Cascade); 
+
+            modelBuilder.Entity<Message>().Property(p => p.Content)
+                .HasMaxLength(1000)
+                .IsRequired();
 
             modelBuilder.Entity<PlanExerciseFrequency>()
                 .HasKey(k => new { k.PlanId, k.FrequencyId, k.ExerciseId, k.Id });
