@@ -1,19 +1,54 @@
-﻿using GymPlanner.Application.Interfaces.Repositories.Chat;
+﻿using GymPlanner.Application.Interfaces.Repositories;
+using GymPlanner.Application.Interfaces.Repositories.Chat;
+using GymPlanner.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GymPlanner.WebUI.Controllers
 {
+    [Authorize]
     public class ChatController : Controller
     {
-        private readonly IChatRepository _chatRepository;
-        public ChatController(IChatRepository chatRepository)
+        private readonly IMessageRepository _messageRepository;
+        private readonly IDialogRepository _dialogRepository;
+        private readonly IUserRepository _userRepository;
+        public ChatController(IMessageRepository messageRepository, IUserRepository userRepository, IDialogRepository dialogRepository)
         {
-            _chatRepository = chatRepository;
+            _messageRepository = messageRepository;
+            _userRepository = userRepository;
+            _dialogRepository = dialogRepository;
         }
-        public IActionResult ChatRoom()
+        
+        public async Task<IActionResult> ChatRoom()
         {
-            return View();
+            var user = await _userRepository.FindByNameAsync(User.Identity.Name);
+            var dialogs = await _dialogRepository.GetUserDialogsAsync(user.Id);
+            return View(dialogs);
+        }
+        
+        public async Task<IActionResult> Messages(int userId)
+        {
+            var currentUserId = await _userRepository.FindByNameAsync(User.Identity.Name);
+            var messages = await _messageRepository.GetMessagesFromDialogAsync(currentUserId.Id, userId);
+            return View(messages);
         }
 
+        public async Task<IActionResult> FindDialog(int userId)
+        {
+            var user = await _userRepository.FindByNameAsync(User.Identity.Name);
+            var dialog = await _dialogRepository.GetDialogBetweenUsersAsync(user.Id,userId);
+            if (dialog == null)
+            {
+                dialog = new Domain.Entities.Chat.Dialog
+                {
+                    UserId = userId,
+                    OtherUserId = user.Id,
+                    OtherUserName = user.Email
+                };
+                await _dialogRepository.AddAsync(dialog);
+            }
+            return RedirectToAction("Messages", new { Id =  dialog.Id});
+        }
     }
 }

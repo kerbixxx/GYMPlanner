@@ -1,0 +1,38 @@
+﻿@using GymPlanner.Domain.Entities.Chat;
+@model List<Message>
+
+<ul id="messages"></ul>
+
+<div id="inputForm">
+    <input type="text" id="messageInput" autocomplete="off" />
+    <button type="submit">Send</button>
+</div>
+<div id="chatroom"></div>
+
+@section scripts {
+    <script src="~/lib/signalr/signalr.js"></script>
+    <script>
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
+
+        connection.on("ReceiveMessage", function (senderId, message) {
+            var li = document.createElement("li");
+            li.textContent = message;
+            document.getElementById("messages").appendChild(li);
+        });
+
+        connection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        document.getElementById("messageForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            var messageInput = document.getElementById("messageInput");
+            var message = messageInput.value;
+            messageInput.value = "";
+            var userId = /* get receiver's id */;
+            connection.invoke("SendMessage", userId, message).catch(function (err) {
+                return console.error(err.toString());
+            });
+        });
+    </script>
+}

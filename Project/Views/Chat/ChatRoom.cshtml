@@ -1,55 +1,9 @@
-﻿
-<div id="header"></div>
-<br />
+﻿@using GymPlanner.Domain.Entities.Chat;
+<!-- Index.cshtml -->
+@model List<Dialog>
 
-<div id="inputForm">
-    <input type="text" id="message" />
-    <input type="button" id="sendBtn" value="Отправить" />
-</div>
-<div id="chatroom"></div>
-
-
-@section Scripts{
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.7/signalr.min.js"></script>
-    <script>
-        const hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl("/chat")
-            .build();
-
-        hubConnection.start().then(function () {
-            console.log("connected");
-
-            hubConnection.invoke('getConnectionId')
-                .then(function (connectionId) {
-                    sessionStorage.setItem('connectionId', connectionId);
-                }).catch(err => console.error(err.toString()));
-        });
-
-
-        let userName = '@User.Identity.Name';
-        // получение сообщения от сервера
-        hubConnection.on('Send', function (message, userName) {
-
-            // создаем элемент <b> для имени пользователя
-            let userNameElem = document.createElement("b");
-            userNameElem.appendChild(document.createTextNode(userName + ': '));
-
-            // создает элемент <p> для сообщения пользователя
-            let elem = document.createElement("p");
-            elem.appendChild(userNameElem);
-            elem.appendChild(document.createTextNode(message));
-
-            var firstElem = document.getElementById("chatroom").firstChild;
-            document.getElementById("chatroom").insertBefore(elem, firstElem);
-
-        });
-
-        // отправка сообщения на сервер
-        document.getElementById("sendBtn").addEventListener("click", function (e) {
-            let message = document.getElementById("message").value;
-            hubConnection.invoke("Send", message, userName);
-        });
-    </script>
+@foreach (var dialog in Model)
+{
+    <a href="@Url.Action("Messages", "Chat", new { userId = dialog.OtherUserId })">@dialog.OtherUserName</a>
+    <br />
 }
-@* https://metanit.com/sharp/aspnet5/30.1.php *@

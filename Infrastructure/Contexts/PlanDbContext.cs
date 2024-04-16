@@ -19,6 +19,7 @@ namespace GymPlanner.Infrastructure.Contexts
         public DbSet<Frequency> Frequencies { get; set; }
         public DbSet<PlanExerciseFrequency> PlanExerciseFrequencies { get;set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Dialog> Dialogs { get; set; }
 
         public PlanDbContext(DbContextOptions<PlanDbContext> options) : base(options) { }
 
@@ -40,10 +41,16 @@ namespace GymPlanner.Infrastructure.Contexts
             modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
             modelBuilder.Entity<User>().HasData(new User[] { adminUser });
 
+            modelBuilder.Entity<Dialog>().HasKey(d => d.Id);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Dialog)
+                .WithMany(d => d.Messages);
+
             modelBuilder.Entity<Message>().HasKey(k => k.Id);
 
             modelBuilder.Entity<Message>().Property(p => p.Content)
-                .HasMaxLength(1000)
+                .HasMaxLength(2077)
                 .IsRequired();
 
             modelBuilder.Entity<PlanExerciseFrequency>()

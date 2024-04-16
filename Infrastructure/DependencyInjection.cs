@@ -19,7 +19,8 @@ namespace GymPlanner.Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IExerciseRepository, ExerciseRepository>();
             services.AddScoped<IFrequencyRepository, FrequencyRepository>();
-            services.AddScoped<IChatRepository, ChatRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<IDialogRepository, DialogRepository>();
             return services;
         }
 
