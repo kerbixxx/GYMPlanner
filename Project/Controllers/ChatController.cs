@@ -1,5 +1,6 @@
 ﻿using GymPlanner.Application.Interfaces.Repositories;
 using GymPlanner.Application.Interfaces.Repositories.Chat;
+using GymPlanner.Application.Models.Chat;
 using GymPlanner.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,13 +25,17 @@ namespace GymPlanner.WebUI.Controllers
         {
             var user = await _userRepository.FindByNameAsync(User.Identity.Name);
             var dialogs = await _dialogRepository.GetUserDialogsAsync(user.Id);
+            var dialogDtos = new List<DialogDto>();
+            foreach (var dialog in dialogs)
+            {
+                dialogDtos.Add(new DialogDto() { Id = dialog.Id, OtherUserName = dialog.OtherUser.Email });
+            }
             return View(dialogs);
         }
         
-        public async Task<IActionResult> Messages(int userId)
+        public async Task<IActionResult> Messages(int dialogId)
         {
-            var currentUserId = await _userRepository.FindByNameAsync(User.Identity.Name);
-            var messages = await _messageRepository.GetMessagesFromDialogAsync(currentUserId.Id, userId);
+            var messages = await _messageRepository.GetMessagesFromDialogAsync(dialogId);
             return View(messages);
         }
 
@@ -44,7 +49,6 @@ namespace GymPlanner.WebUI.Controllers
                 {
                     UserId = userId,
                     OtherUserId = user.Id,
-                    OtherUserName = user.Email
                 };
                 await _dialogRepository.AddAsync(dialog);
             }

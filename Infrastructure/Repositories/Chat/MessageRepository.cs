@@ -18,12 +18,18 @@ namespace GymPlanner.Infrastructure.Repositories.Chat
             _db = db;
         }
 
-        public async Task<List<Message>> GetMessagesFromDialogAsync(int currentUserId, int userId)
+        public async Task<List<Message>> GetMessagesFromDialogAsync(int dialogId)
         {
-            return await _db.Messages.Where(m => (m.UserIdFrom == currentUserId && m.UserIdTo == userId) ||
-                            (m.UserIdFrom == userId && m.UserIdTo == currentUserId))
+            return await _db.Messages.Where(m=>m.DialogId==dialogId)
                 .OrderBy(m => m.Created)
                 .ToListAsync();
         }
+        //public async Task<List<Message>> GetMessagesFromDialogAsync(int currentUserId, int userId)
+        //{
+        //    return await _db.Messages.Where(m => (m.UserIdFrom == currentUserId && m.UserIdTo == userId) ||
+        //                    (m.UserIdFrom == userId && m.UserIdTo == currentUserId))
+        //        .OrderBy(m => m.Created)
+        //        .ToListAsync();
+        //}
     }
 }

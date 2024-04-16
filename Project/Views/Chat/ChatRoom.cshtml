@@ -1,9 +1,9 @@
-﻿@using GymPlanner.Domain.Entities.Chat;
+﻿@using GymPlanner.Application.Models.Chat;
 <!-- Index.cshtml -->
-@model List<Dialog>
+@model List<DialogDto>
 
 @foreach (var dialog in Model)
 {
-    <a href="@Url.Action("Messages", "Chat", new { userId = dialog.OtherUserId })">@dialog.OtherUserName</a>
+    <a href="@Url.Action("Messages", "Chat", new { userId = dialog.Id })">@dialog.OtherUserName</a>
     <br />
 }

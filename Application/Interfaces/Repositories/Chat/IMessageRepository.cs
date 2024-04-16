@@ -4,6 +4,7 @@ namespace GymPlanner.Application.Interfaces.Repositories.Chat
 {
     public interface IMessageRepository : IRepository<Message>
     {
-        Task<List<Message>> GetMessagesFromDialogAsync(int currentUserId, int userId);
+        //Task<List<Message>> GetMessagesFromDialogAsync(int currentUserId, int userId);
+        Task<List<Message>> GetMessagesFromDialogAsync(int dialogId);
     }
 }
