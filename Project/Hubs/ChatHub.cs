@@ -11,11 +11,9 @@ namespace GymPlanner.WebUI.Hubs
     public class ChatHub : Hub
     {
         private readonly IMessageRepository _chatRepository;
-        private readonly IUserRepository _userRepository;
-        public ChatHub(IMessageRepository chatRepository, IUserRepository userRepository)
+        public ChatHub(IMessageRepository chatRepository)
         {
             _chatRepository = chatRepository;
-            _userRepository = userRepository;
         }
 
         public override async Task OnConnectedAsync()
@@ -24,7 +22,7 @@ namespace GymPlanner.WebUI.Hubs
             var claims = Context.User;
             await base.OnConnectedAsync();
         }
-        public async Task SendMessage(string senderId, string receiverId, string dialogId, string message)
+        public async Task SendMessage(string senderId, string receiverId, string receiverName, string dialogId, string message)
         {
             var newMessage = new Message
             {
@@ -34,10 +32,10 @@ namespace GymPlanner.WebUI.Hubs
                 Created = DateTime.Now,
                 DialogId = int.Parse(dialogId)
             };
+            var senderName = Context.UserIdentifier;
             await _chatRepository.AddAsync(newMessage);
-            var userName = await _userRepository.GetAsync(int.Parse(receiverId));
-            await Clients.User(userName.Email).SendAsync("ReceiveMessage", senderId, message);
-            await Clients.User(Context.UserIdentifier).SendAsync("ReceiveMessage", senderId, message);
+            await Clients.User(receiverName).SendAsync("ReceiveMessage", senderName, message);
+            await Clients.User(senderName).SendAsync("ReceiveMessage", senderName, message);
         }
         public string GetConnectionId()
         {

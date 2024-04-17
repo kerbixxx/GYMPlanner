@@ -6,13 +6,13 @@
     <input type="button" id="sendBtn" value="Отправить" />
 </div>
 <div id="chatroom">
-
     @if (Model.Messages != null)
     {
         Model.Messages.Reverse();
         @foreach (var message in Model.Messages)
         {
-            <p><b>@message.UserIdFrom: </b>@message.Content</p>
+            <p><b>@(message.UserIdFrom == Model.SenderId ? Model.SenderName : Model.ReceiverName): </b>@message.Content</p>
+
         }
     }
 </div>
@@ -29,6 +29,7 @@
         let receiverId = '@Model.ReceiverId';
         let dialogId = '@Model.DialogId';
         let userName = '@Model.SenderName';
+        let receiverName = '@Model.ReceiverName'
 
         hubConnection.on("SendMessage", function (message, userName) {
             let userNameElem = document.createElement("b");
@@ -43,11 +44,11 @@
         });
         document.getElementById("sendBtn").addEventListener("click", function (e) {
             let message = document.getElementById("message").value;
-            hubConnection.invoke("SendMessage", senderId, receiverId, dialogId, message);
+            hubConnection.invoke("SendMessage", senderId, receiverId, receiverName, dialogId, message);
         });
-        hubConnection.on("ReceiveMessage", function (senderId, message) {
+        hubConnection.on("ReceiveMessage", function (userName, message) {
             let userNameElem = document.createElement("b");
-            userNameElem.appendChild(document.createTextNode(senderId + ': '));
+            userNameElem.appendChild(document.createTextNode(userName + ': '));
 
             let elem = document.createElement("p");
             elem.appendChild(userNameElem);
