@@ -20,12 +20,17 @@ namespace GymPlanner.Infrastructure.Repositories.Chat
 
         public async Task<Dialog> GetDialogBetweenUsersAsync(int userId, int otherUserId)
         {
-            return await _db.Dialogs.Include(u=>u.OtherUser).FirstOrDefaultAsync(u => (u.UserId == userId && u.OtherUserId == otherUserId)||(u.UserId==otherUserId && u.OtherUserId == userId));
+            return await _db.Dialogs
+                .Include(u=>u.OtherUser)
+                .FirstOrDefaultAsync(u => (u.UserId == userId && u.OtherUserId == otherUserId)||(u.UserId==otherUserId && u.OtherUserId == userId));
         }
 
         public async Task<List<Dialog>> GetUserDialogsAsync(int id)
         {
-            return await _db.Dialogs.Where(d => d.UserId == id || d.OtherUserId == id).ToListAsync();
+            return await _db.Dialogs
+                .Include(d=>d.User)
+                .Include(d=>d.OtherUser)
+                .Where(d => d.UserId == id || d.OtherUserId == id).ToListAsync();
         }
     }
 }

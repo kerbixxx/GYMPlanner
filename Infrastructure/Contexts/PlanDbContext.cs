@@ -42,6 +42,17 @@ namespace GymPlanner.Infrastructure.Contexts
             modelBuilder.Entity<User>().HasData(new User[] { adminUser });
 
             modelBuilder.Entity<Dialog>().HasKey(d => d.Id);
+            modelBuilder.Entity<Dialog>()
+                .HasOne(d => d.User)
+                .WithMany() 
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            modelBuilder.Entity<Dialog>()
+                .HasOne(d => d.OtherUser)
+                .WithMany() 
+                .HasForeignKey(d => d.OtherUserId)
+                .OnDelete(DeleteBehavior.Restrict); 
 
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Dialog)

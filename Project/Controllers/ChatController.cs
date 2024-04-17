@@ -28,9 +28,16 @@ namespace GymPlanner.WebUI.Controllers
             var dialogDtos = new List<DialogDto>();
             foreach (var dialog in dialogs)
             {
-                dialogDtos.Add(new DialogDto() { Id = dialog.Id, OtherUserName = dialog.OtherUser.Email });
+                if(dialog.User.Email != User.Identity.Name)
+                {
+                    dialogDtos.Add(new DialogDto() { Id = dialog.Id, OtherUserName = dialog.User.Email });
+                }
+                else
+                {
+                    dialogDtos.Add(new DialogDto() { Id = dialog.Id, OtherUserName = dialog.OtherUser.Email });
+                }
             }
-            return View(dialogs);
+            return View(dialogDtos);
         }
         
         public async Task<IActionResult> Messages(int dialogId)
