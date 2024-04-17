@@ -9,6 +9,7 @@
 
     @if (Model.Messages != null)
     {
+        Model.Messages.Reverse();
         @foreach (var message in Model.Messages)
         {
             <p><b>@message.UserIdFrom: </b>@message.Content</p>
@@ -44,10 +45,16 @@
             let message = document.getElementById("message").value;
             hubConnection.invoke("SendMessage", senderId, receiverId, dialogId, message);
         });
-        connection.on("ReceiveMessage", function (senderId, message) {
-            var li = document.createElement("li");
-            li.textContent = message;
-            document.getElementById("messages").appendChild(li);
+        hubConnection.on("ReceiveMessage", function (senderId, message) {
+            let userNameElem = document.createElement("b");
+            userNameElem.appendChild(document.createTextNode(senderId + ': '));
+
+            let elem = document.createElement("p");
+            elem.appendChild(userNameElem);
+            elem.appendChild(document.createTextNode(message));
+
+            let firstElem = document.getElementById("chatroom").firstChild;
+            document.getElementById("chatroom").insertBefore(elem, firstElem);
         });
 
         hubConnection.start();
