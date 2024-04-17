@@ -22,7 +22,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = new PathString("/Account/Login");
     });
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;
+});
+
 
 builder.Services.AddRepositories();
 builder.Services.AddCustomServices();

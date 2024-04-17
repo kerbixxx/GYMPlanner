@@ -42,8 +42,27 @@ namespace GymPlanner.WebUI.Controllers
         
         public async Task<IActionResult> Messages(int dialogId)
         {
-            var messages = await _messageRepository.GetMessagesFromDialogAsync(dialogId);
-            return View(messages);
+            var dialog = await _dialogRepository.GetAsync(dialogId);
+            var messageDto = new MessagesDto()
+            {
+                DialogId = dialogId,
+                Messages = dialog.Messages
+            };
+            if(dialog.User.Email == User.Identity.Name)
+            {
+                messageDto.SenderId = dialog.UserId;
+                messageDto.SenderName = dialog.User.Email;
+                messageDto.ReceiverId = dialog.OtherUserId;
+                messageDto.ReceiverName = dialog.OtherUser.Email;
+            }
+            else
+            {
+                messageDto.SenderId = dialog.OtherUserId;
+                messageDto.SenderName = dialog.OtherUser.Email;
+                messageDto.ReceiverId = dialog.UserId;
+                messageDto.ReceiverName = dialog.User.Email;
+            }
+            return View(messageDto);
         }
 
         public async Task<IActionResult> FindDialog(int userId)

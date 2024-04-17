@@ -1,38 +1,55 @@
-﻿@using GymPlanner.Domain.Entities.Chat;
-@model List<Message>
-
-<ul id="messages"></ul>
+﻿@using GymPlanner.Application.Models.Chat;
+@model MessagesDto
 
 <div id="inputForm">
-    <input type="text" id="messageInput" autocomplete="off" />
-    <button type="submit">Send</button>
+    <input type="text" id="message" />
+    <input type="button" id="sendBtn" value="Отправить" />
 </div>
-<div id="chatroom"></div>
+<div id="chatroom">
+
+    @if (Model.Messages != null)
+    {
+        @foreach (var message in Model.Messages)
+        {
+            <p><b>@message.UserIdFrom: </b>@message.Content</p>
+        }
+    }
+</div>
 
 @section scripts {
-    <script src="~/lib/signalr/signalr.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.7/signalr.min.js"></script>
+    <script src="https://unpkg.com/microsoft/signalr@3.1.0/dist/browser/signalr.min.js"></script>
     <script>
-        var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
+        const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/chat")
+            .build();
 
+        let senderId = '@Model.SenderId';
+        let receiverId = '@Model.ReceiverId';
+        let dialogId = '@Model.DialogId';
+        let userName = '@Model.SenderName';
+
+        hubConnection.on("SendMessage", function (message, userName) {
+            let userNameElem = document.createElement("b");
+            userNameElem.appendChild(document.createTextNode(userName + ': '));
+
+            let elem = document.createElement("p");
+            elem.appendChild(userNameElem);
+            elem.appendChild(document.createTextNode(message));
+
+            let firstElem = document.getElementById("chatroom").firstChild;
+            document.getElementById("chatroom").insertBefore(elem, firstElem);
+        });
+        document.getElementById("sendBtn").addEventListener("click", function (e) {
+            let message = document.getElementById("message").value;
+            hubConnection.invoke("SendMessage", senderId, receiverId, dialogId, message);
+        });
         connection.on("ReceiveMessage", function (senderId, message) {
             var li = document.createElement("li");
             li.textContent = message;
             document.getElementById("messages").appendChild(li);
         });
 
-        connection.start().catch(function (err) {
-            return console.error(err.toString());
-        });
-
-        document.getElementById("messageForm").addEventListener("submit", function (event) {
-            event.preventDefault();
-            var messageInput = document.getElementById("messageInput");
-            var message = messageInput.value;
-            messageInput.value = "";
-            var userId = /* get receiver's id */;
-            connection.invoke("SendMessage", userId, message).catch(function (err) {
-                return console.error(err.toString());
-            });
-        });
+        hubConnection.start();
     </script>
 }

@@ -32,5 +32,14 @@ namespace GymPlanner.Infrastructure.Repositories.Chat
                 .Include(d=>d.OtherUser)
                 .Where(d => d.UserId == id || d.OtherUserId == id).ToListAsync();
         }
+
+        public override async Task<Dialog> GetAsync(int id)
+        {
+            return await _db.Dialogs
+                .Include(d=>d.User)
+                .Include(d=>d.OtherUser)
+                .Include(d=>d.Messages)
+                .FirstOrDefaultAsync(d=>d.Id == id);
+        }
     }
 }

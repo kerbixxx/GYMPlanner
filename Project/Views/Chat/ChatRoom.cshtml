@@ -4,6 +4,6 @@
 
 @foreach (var dialog in Model)
 {
-    <a href="@Url.Action("Messages", "Chat", new { userId = dialog.Id })">@dialog.OtherUserName</a>
+    <a href="@Url.Action("Messages", "Chat", new { dialogId = dialog.Id })">@dialog.OtherUserName</a>
     <br />
 }
