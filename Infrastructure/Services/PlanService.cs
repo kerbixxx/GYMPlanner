@@ -31,6 +31,7 @@ namespace GymPlanner.Infrastructure.Services
 
         public async Task AddPlanAsync(Plan plan)
         {
+            plan.CreatedAt = DateTime.Now;
             await _planRepo.AddAsync(plan);
             Exercise exercise = new()
             {
@@ -174,7 +175,8 @@ namespace GymPlanner.Infrastructure.Services
                 Frequencies = plan.planExersiseFrequencies.Select(pef => pef.Frequency).Distinct().ToList(),
                 UserId = plan.UserId,
                 MenuDescription = plan.MenuDescription,
-                FullDescription = plan.FullDescription
+                FullDescription = plan.FullDescription,
+                CreatedAt = plan.CreatedAt
             };
             return planDto;
         }

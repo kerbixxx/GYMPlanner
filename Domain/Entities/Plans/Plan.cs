@@ -11,5 +11,6 @@ namespace GymPlanner.Domain.Entities.Plans
         public User? User { get; set; }
         public IList<PlanExerciseFrequency>? planExersiseFrequencies { get; set; }
         public List<Tag>? Tags { get; set; }
+        public DateTime? CreatedAt { get; set; }
     }
 }
