@@ -9,67 +9,89 @@
     <link rel="stylesheet" href="~/Project.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Project</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Plan" asp-action="Index">Plans</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Chat" asp-action="ChatRoom">Chat</a>
-                        </li>
-                        @if (User.IsInRole("admin"))
-                        {
+    @if (User.Identity.IsAuthenticated)
+    {
+        <header>
+            <nav class="navbar sticky-top bg-body-tertiary navbar-expand-sm navbar-toggleable-sm navbar-light bg-dark border-body border-bottom box-shadow mb-3" data-bs-theme="dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand text-white" asp-area="" asp-controller="Home" asp-action="Index">Project</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users</a>
-                            </li>
-                        }
-                    </ul>
-                    <ul class="navbar-nav">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-route-name="@User.Identity.Name" asp-area="" asp-controller="Profile" asp-action="Index">@User.Identity.Name</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Plan" asp-action="Index">Plans</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Chat" asp-action="ChatRoom">Chat</a>
                             </li>
-                        }
-                    </ul>
+                            @if (User.IsInRole("admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Index">Users</a>
+                                </li>
+                            }
+                        </ul>
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-route-name="@User.Identity.Name" asp-area="" asp-controller="Profile" asp-action="Index">@User.Identity.Name</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                            </li>
+                        </ul>
                 </div>
             </div>
         </nav>
     </header>
+    }
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-@* 
-    <footer class="border-top footer text-muted">
+
+    <footer class="fixed-bottom bg-dark text-light">
         <div class="container">
-            &copy; 2024 - Project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>ПЛАНИРОВЩИК ТРЕНИРОВОК</h5>
+                    <p class="small">Онлайн-планировщик тренировок позволяет вам создать 5 бесплатных индивидуальных планов тренировок, которые помогут вам достичь ваших целей в фитнесе.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>О НАС</h5>
+                    <p class="small">Мы ваш личный тренер, ваш диетолог, ваш эксперт по добавкам. Наша цель – сделать спорт приятным для здоровой жизни.</p>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="small">Кто мы</a></li>
+                        <li><a href="#" class="small">Связаться</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Полезные ресурсы</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="small">Питание</a></li>
+                        <li><a href="#" class="small">Политика конфиденциальности</a></li>
+                        <li><a href="#" class="small">Дисклеймер</a></li>
+                        <li><a href="#" class="small">Условия пользования</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>КОНТАКТЫ</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="https://github.com/kerbixxx" class="small">GitHub</a></li>
+                        <li class="small">kerbixcs@mail.ru</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </footer> *@
+    </footer>
+
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
