@@ -1,5 +1,15 @@
 ﻿@using GymPlanner.Application.Models.Plan;
 @model PlanEditDto
+@{
+    string successMessage = TempData["SuccessMessage"] as string;
+}
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success" role="alert">
+        @successMessage
+    </div>
+}
 
 <div id="modDialog" class="modal fade">
     <div id="dialogContent" class="modal-dialog"></div>
@@ -14,9 +24,9 @@
             <div class="col-6">
                 <h2 class="p1-3">Редактирование плана</h2>
             </div>
-            <div class="col-6 text-right">
+@*             <div class="col-6 text-right">
                 <a asp-action="Index" class="btn btn-primary w-50">Назад</a>
-            </div>
+            </div> *@
         </div>
         <br /><br />
         <div class="row">
