@@ -1,8 +1,8 @@
 ﻿@using GymPlanner.Domain.Entities.Plans;
 @model List<Plan>
 
-<div class="container p-3">
-    <div class="row pt-4">
+<div class="container pt-4">
+    <div class="row">
         <div class="col-6">
             <h2 class="text-primary">Список планов</h2>
         </div>
@@ -13,35 +13,49 @@
 
     <br /><br />
 
+    <div class="searchPlans">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Фильтр по тегам" aria-label="Фильтр по тегам" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">Применить</button>
+                    <label class="input-group-text" for="inputSortBy">Сортировка по:</label>
+                    <select class="form-select" id="inputSortBy">
+                        <option selected>Выбор...</option>
+                        <option value="Rating">Рейтинг</option>
+                        <option value="CommentCount">Количество комментариев</option>
+                        <option value="CreatedDate">Дата создания</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     @if (Model.Count() > 0)
     {
-        <table class="table table-bordered table-striped" style="width:100%">
-            <thead>
-                <tr>
-                    <th>Название</th>
-                    <th>Элементы управления</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach(var plan in Model)
-                {
-                    <tr>
-                        <td width="30%">@plan.Name</td>
-                        <td class="text-center">
-                            <div class="w-100 btn-group" role="group">
-                                <a asp-route-Id="@plan.Id" asp-action="Details" class="btn btn-primary mx-2">Просмотр</a>
-                                <a asp-route-Id="@plan.UserId" asp-controller="Profile" asp-action="Index" class="btn btn-primary mx-2">В профиль автора</a>
-                                @if (User.IsInRole("admin"))
-                                {
-                                    <a asp-route-id="@plan.Id" asp-action="Edit" class="btn btn-warning mx-2">Редактировать</a>
-                                    <button class="btn btn-danger delete-plan" data-plan-id="@plan.Id">Удалить</button>
-                                }
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        @foreach (var plan in Model)
+        {
+            <div class="row mb-4">
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <img src="img/example.jpg" alt="@plan.Name" class="img-fluid mb-2" style="max-height: 200px;" />
+                </div>
+                <div class="col-lg-8 col-md-6 col-sm-12">
+                    <h3>@plan.Name</h3>
+                    <p>@plan.MenuDescription</p>
+                    <div class="btn-group" role="group">
+                        <a asp-route-Id="@plan.Id" asp-action="Details" class="btn btn-primary">Просмотр</a>
+                        <a asp-route-Id="@plan.UserId" asp-controller="Profile" asp-action="Index" class="btn btn-primary">В профиль автора</a>
+                        @if (User.IsInRole("admin"))
+                        {
+                            <a asp-route-id="@plan.Id" asp-action="Edit" class="btn btn-warning">Редактировать</a>
+                            <button class="btn btn-danger delete-plan" data-plan-id="@plan.Id">Удалить</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
     }
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

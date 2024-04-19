@@ -11,6 +11,8 @@ namespace GymPlanner.Application.Models.Plan
     {
         public int PlanId { get; set; }
         public int UserId { get; set; }
+        public string? MenuDescription { get; set; }
+        public string? FullDescription { get; set; }
         public string Name { get; set; }
         public List<ExerciseFrequencyDto> ExerciseFrequencies { get; set; }
         public List<Exercise> Exercises { get; set; }

@@ -78,6 +78,8 @@ namespace GymPlanner.Infrastructure.Contexts
                 .HasMaxLength(400)
                 .IsRequired();
 
+            modelBuilder.Entity<Plan>().Property(d => d.MenuDescription).HasMaxLength(300);
+
             modelBuilder.Entity<Exercise>()
                 .HasKey(k => k.Id);
 

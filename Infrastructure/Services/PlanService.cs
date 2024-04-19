@@ -69,6 +69,8 @@ namespace GymPlanner.Infrastructure.Services
                 Id = planDto.PlanId,
                 Name = planDto.Name,
                 UserId = planDto.UserId,
+                FullDescription = planDto.FullDescription,
+                MenuDescription = planDto.MenuDescription
             };
             await _planRepo.UpdateAsync(plan);
             foreach (var pef in planDto.ExerciseFrequencies)
@@ -170,7 +172,9 @@ namespace GymPlanner.Infrastructure.Services
                 Name = plan.Name,
                 Exercises = plan.planExersiseFrequencies.Select(pef => pef.Exercise).Distinct().ToList(),
                 Frequencies = plan.planExersiseFrequencies.Select(pef => pef.Frequency).Distinct().ToList(),
-                UserId = plan.UserId
+                UserId = plan.UserId,
+                MenuDescription = plan.MenuDescription,
+                FullDescription = plan.FullDescription
             };
             return planDto;
         }
