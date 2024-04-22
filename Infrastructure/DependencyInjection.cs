@@ -22,6 +22,7 @@ namespace GymPlanner.Infrastructure
             services.AddScoped<IFrequencyRepository, FrequencyRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IDialogRepository, DialogRepository>();
+            services.AddScoped<IRatingRepository, RatingRepository>();
             return services;
         }
 
@@ -29,6 +30,7 @@ namespace GymPlanner.Infrastructure
         {
             services.AddSingleton<IUserIdProvider, UserIdProvider>();
             services.AddTransient<IPlanService,PlanService>();
+            services.AddTransient<IRatingService,RatingService>();
             return services;
         }
     }

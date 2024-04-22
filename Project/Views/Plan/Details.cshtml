@@ -10,6 +10,11 @@
             <a asp-action="Index" class="btn btn-primary w-50">Назад</a>
         </div>
     </div>
+    <div class="row">
+        <div class="col-12">
+            <button id="ratePlan" class="btn btn-primary">Оценить план</button>
+        </div>
+    </div>
     <br /><br />
     @if (Model.ExerciseFrequencies.Count > 0)
     {
@@ -55,3 +60,32 @@
     <br /><br />
     <h5>Комментарии:</h5>
 </div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#ratePlan').click(function () {
+                var planId = '@Model.PlanId';
+                var userName = '@User.Identity.Name';
+                var vote = prompt("Введите вашу оценку от 1 до 5:");
+
+                if (isNaN(parseInt(vote)) || parseInt(vote) < 1 || parseInt(vote) > 5) {
+                    alert("Пожалуйста, введите число от 1 до 5.");
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Plan/RatePlan',
+                    type: 'POST',
+                    data: { planId: planId, userName: userName, vote: parseInt(vote) },
+                    success: function (response) {
+                        alert('План успешно оценен.');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Ошибка при оценке плана:', error);
+                    }
+                });
+            });
+        });
+
+    </script>
+}

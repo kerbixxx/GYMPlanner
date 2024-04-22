@@ -22,13 +22,20 @@ namespace GymPlanner.Infrastructure.Services
         private readonly IPlanExerciseFrequencyRepository _pefRepo;
         private readonly IExerciseRepository _exerciseRepo;
         private readonly IFrequencyRepository _frequencyRepo;
-        public PlanService(IPlanRepository planRepo, IPlanExerciseFrequencyRepository pefRepo, IExerciseRepository exerciseRepository, IFrequencyRepository frequencyRepository)
+        private readonly IRatingRepository _ratingRepo;
+        public PlanService(IPlanRepository planRepo,
+                           IPlanExerciseFrequencyRepository pefRepo,
+                           IExerciseRepository exerciseRepository,
+                           IFrequencyRepository frequencyRepository,
+                           IRatingRepository ratingRepo)
         {
             _planRepo = planRepo;
             _pefRepo = pefRepo;
             _exerciseRepo = exerciseRepository;
             _frequencyRepo = frequencyRepository;
+            _ratingRepo = ratingRepo;
         }
+
 
         public async Task AddPlanAsync(Plan plan)
         {
@@ -221,5 +228,7 @@ namespace GymPlanner.Infrastructure.Services
                 await _pefRepo.AddAsync(pef);
             }
         }
+
+
     }
 }

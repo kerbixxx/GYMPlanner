@@ -55,15 +55,13 @@
     });
 
     $(document).ready(function () {
-        // Функция для выполнения запроса на получение отфильтрованных планов при загрузке страницы
         function loadFilteredPlans() {
-            var tagFilter = $('#tagFilter').val(); // Получаем значение введенного пользователем тега
+            var tagFilter = $('#tagFilter').val(); 
             $.ajax({
-                url: '/Plan/GetFilteredPlans', // Укажите URL для обработки запроса на сервере
+                url: '/Plan/GetFilteredPlans', 
                 type: 'GET',
-                data: { tag: tagFilter }, // Передаем значение тега на сервер
+                data: { tag: tagFilter }, 
                 success: function (response) {
-                    // Обновляем содержимое страницы с отфильтрованными данными
                     $('.searchResults').html(response);
                 },
                 error: function (xhr, status, error) {
@@ -72,12 +70,9 @@
             });
         }
 
-        // Вызываем функцию загрузки отфильтрованных планов при загрузке страницы
         loadFilteredPlans();
 
-        // Добавляем обработчик события для кнопки "Применить фильтр"
         $('#applyFilter').click(function () {
-            // Выполняем запрос на получение отфильтрованных планов при клике на кнопку
             loadFilteredPlans();
         });
     });

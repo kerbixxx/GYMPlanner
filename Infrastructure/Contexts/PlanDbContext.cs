@@ -20,7 +20,7 @@ namespace GymPlanner.Infrastructure.Contexts
         public DbSet<PlanExerciseFrequency> PlanExerciseFrequencies { get;set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Dialog> Dialogs { get; set; }
-
+        public DbSet<Rating> Ratings { get; set; }
         public PlanDbContext(DbContextOptions<PlanDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,18 +41,32 @@ namespace GymPlanner.Infrastructure.Contexts
             modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
             modelBuilder.Entity<User>().HasData(new User[] { adminUser });
 
+            modelBuilder.Entity<Rating>().HasKey(k => new { k.PlanId, k.UserId });
+
+            modelBuilder.Entity<Rating>()
+                .HasOne(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Rating>()
+                .HasOne(r => r.Plan)
+                .WithMany()
+                .HasForeignKey(r => r.PlanId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Dialog>().HasKey(d => d.Id);
             modelBuilder.Entity<Dialog>()
                 .HasOne(d => d.User)
-                .WithMany() 
+                .WithMany()
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Dialog>()
                 .HasOne(d => d.OtherUser)
-                .WithMany() 
+                .WithMany()
                 .HasForeignKey(d => d.OtherUserId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Dialog)

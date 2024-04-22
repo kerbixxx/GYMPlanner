@@ -15,10 +15,12 @@ namespace GymPlanner.WebUI.Controllers
     {
         private readonly IPlanService _planService;
         private readonly IUserRepository _userRepo;
-        public PlanController(IPlanService planService, IUserRepository userRepo)
+        private readonly IRatingService _ratingService;
+        public PlanController(IPlanService planService, IUserRepository userRepo, IRatingService ratingService)
         {
             _planService = planService;
             _userRepo = userRepo;
+            _ratingService = ratingService;
         }
         public IActionResult Index()
         {
@@ -71,6 +73,14 @@ namespace GymPlanner.WebUI.Controllers
             return RedirectToAction("Edit", new { Id = dto.PlanId});
         }
 
+        [HttpPost]
+        public async Task<IActionResult> RatePlan(int planId, string userName, int vote)
+        {
+            var user = await _userRepo.FindByNameAsync(userName);
+            if (user == null) return BadRequest();
+            await _ratingService.RatePlanAsync(planId, user.Id, vote);
+            return Ok();
+        }
         public IActionResult AddFrequencyModal(int planId)
         {
             var dto = new FrequencyDto() { PlanId = planId, Name = "" };
