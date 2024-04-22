@@ -42,10 +42,16 @@
                 </table>
             </div>
         </div>
-        <p>@Model.FullDescription</p>
+        @if (Model.FullDescription != null)
+        {
+            <h5>Описание плана:</h5>
+            <p>@Model.FullDescription</p>
+        }
     }
     else
     {
         <p>План не заполнен</p>
     }
+    <br /><br />
+    <h5>Комментарии:</h5>
 </div>

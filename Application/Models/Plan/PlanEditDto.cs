@@ -18,6 +18,7 @@ namespace GymPlanner.Application.Models.Plan
         public List<Exercise> Exercises { get; set; }
         public List<Frequency> Frequencies { get; set; }
         public DateTime? CreatedAt { get; set; }
+        public string? TagsString { get; set; }
     }
 
     public record class ExerciseFrequencyDto

@@ -18,8 +18,8 @@ namespace GymPlanner.Infrastructure.Repositories.Plan
             return await _db.Plans.Include(p => p.planExersiseFrequencies)
                     .ThenInclude(p => p.Frequency)
                 .Include(p => p.planExersiseFrequencies)
-                    .ThenInclude(p => p.Exercise).
-                FirstOrDefaultAsync(p => p.Id == id);
+                    .ThenInclude(p => p.Exercise)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<List<Domain.Entities.Plans.Plan>> GetAll()

@@ -1,7 +1,4 @@
-﻿@using GymPlanner.Domain.Entities.Plans;
-@model List<Plan>
-
-<div class="container pt-4">
+﻿<div class="container pt-4">
     <div class="row">
         <div class="col-6">
             <h2 class="text-primary">Список планов</h2>
@@ -17,8 +14,8 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Фильтр по тегам" aria-label="Фильтр по тегам" aria-describedby="button-addon2">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">Применить</button>
+                    <input type="text" class="form-control" id="tagFilter" placeholder="Фильтр по тегам" aria-label="Фильтр по тегам" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-secondary" type="button" id="applyFilter">Применить</button>
                     <label class="input-group-text" for="inputSortBy">Сортировка по:</label>
                     <select class="form-select" id="inputSortBy">
                         <option selected>Выбор...</option>
@@ -31,32 +28,9 @@
         </div>
     </div>
 
-
-
-    @if (Model.Count() > 0)
-    {
-        @foreach (var plan in Model)
-        {
-            <div class="row mb-4">
-                <div class="col-lg-4 col-md-6 col-sm-12">
-                    <img src="img/example.jpg" alt="@plan.Name" class="img-fluid mb-2" style="max-height: 200px;" />
-                </div>
-                <div class="col-lg-8 col-md-6 col-sm-12">
-                    <h3>@plan.Name</h3>
-                    <p>@plan.MenuDescription</p>
-                    <div class="btn-group" role="group">
-                        <a asp-route-Id="@plan.Id" asp-action="Details" class="btn btn-primary">Просмотр</a>
-                        <a asp-route-Id="@plan.UserId" asp-controller="Profile" asp-action="Index" class="btn btn-primary">В профиль автора</a>
-                        @if (User.IsInRole("admin"))
-                        {
-                            <a asp-route-id="@plan.Id" asp-action="Edit" class="btn btn-warning">Редактировать</a>
-                            <button class="btn btn-danger delete-plan" data-plan-id="@plan.Id">Удалить</button>
-                        }
-                    </div>
-                </div>
-            </div>
-        }
-    }
+    <div class="searchResults">
+        <!-- Здесь будет отображаться отфильтрованный список планов -->
+    </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -79,4 +53,33 @@
             });
         });
     });
+
+    $(document).ready(function () {
+        // Функция для выполнения запроса на получение отфильтрованных планов при загрузке страницы
+        function loadFilteredPlans() {
+            var tagFilter = $('#tagFilter').val(); // Получаем значение введенного пользователем тега
+            $.ajax({
+                url: '/Plan/GetFilteredPlans', // Укажите URL для обработки запроса на сервере
+                type: 'GET',
+                data: { tag: tagFilter }, // Передаем значение тега на сервер
+                success: function (response) {
+                    // Обновляем содержимое страницы с отфильтрованными данными
+                    $('.searchResults').html(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error loading filtered plans:', error);
+                }
+            });
+        }
+
+        // Вызываем функцию загрузки отфильтрованных планов при загрузке страницы
+        loadFilteredPlans();
+
+        // Добавляем обработчик события для кнопки "Применить фильтр"
+        $('#applyFilter').click(function () {
+            // Выполняем запрос на получение отфильтрованных планов при клике на кнопку
+            loadFilteredPlans();
+        });
+    });
+
 </script>

@@ -2,6 +2,7 @@
 using GymPlanner.Application.Interfaces.Services;
 using GymPlanner.Application.Models.Plan;
 using GymPlanner.Domain.Entities.Plans;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +64,17 @@ namespace GymPlanner.Infrastructure.Services
             return await _planRepo.GetAll();
         }
 
+        public async Task<List<Plan>> GetFilteredPlans(string tag)
+        {
+            var plans = await _planRepo.GetAll();
+            if(tag == null)
+            {
+                return plans;
+            }
+            var filteredPlans = plans.Where(t => t.Tags.Any(t=>t.Contains(tag))).ToList();
+            return filteredPlans;
+        }
+
         public async Task UpdatePlanAsync(PlanEditDto planDto)
         {
             var plan = new Plan()
@@ -71,8 +83,11 @@ namespace GymPlanner.Infrastructure.Services
                 Name = planDto.Name,
                 UserId = planDto.UserId,
                 FullDescription = planDto.FullDescription,
-                MenuDescription = planDto.MenuDescription
+                MenuDescription = planDto.MenuDescription,
+                TagsDb = planDto.TagsString
             };
+            var trimmedTags = plan.Tags.Select(tag => tag.Trim()).ToArray();
+            plan.Tags = trimmedTags;
             await _planRepo.UpdateAsync(plan);
             foreach (var pef in planDto.ExerciseFrequencies)
             {
@@ -176,7 +191,8 @@ namespace GymPlanner.Infrastructure.Services
                 UserId = plan.UserId,
                 MenuDescription = plan.MenuDescription,
                 FullDescription = plan.FullDescription,
-                CreatedAt = plan.CreatedAt
+                CreatedAt = plan.CreatedAt,
+                TagsString = plan.TagsDb
             };
             return planDto;
         }

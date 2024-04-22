@@ -1,4 +1,6 @@
 ﻿using GymPlanner.Domain.Entities.Identity;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GymPlanner.Domain.Entities.Plans
 {
@@ -10,7 +12,24 @@ namespace GymPlanner.Domain.Entities.Plans
         public int UserId { get; set; }
         public User? User { get; set; }
         public IList<PlanExerciseFrequency>? planExersiseFrequencies { get; set; }
-        public List<Tag>? Tags { get; set; }
+        public string? TagsDb { get; set; }
+        [NotMapped]
+        public string[] Tags
+        {
+            get
+            {
+                if (TagsDb != null)
+                {
+                    var tab = this.TagsDb.Split(',');
+                    return tab.ToArray();
+                }
+                return new string[0];
+            }
+            set
+            {
+                this.TagsDb = string.Join(",", value);
+            }
+        }
         public DateTime? CreatedAt { get; set; }
     }
 }

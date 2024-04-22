@@ -20,10 +20,9 @@ namespace GymPlanner.WebUI.Controllers
             _planService = planService;
             _userRepo = userRepo;
         }
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var plans = await _planService.GetAllPlansAsync();
-            return View(plans);
+            return View();
         }
 
         public async Task<IActionResult> Details(int id)
@@ -50,6 +49,12 @@ namespace GymPlanner.WebUI.Controllers
                 //return RedirectToAction("Index", "Profile", new { Id = planDto.UserId });
             }
             return await Edit(planDto);
+        }
+
+        public async Task<IActionResult> GetFilteredPlans(string tag)
+        {
+            var filteredPlans = await _planService.GetFilteredPlans(tag);
+            return PartialView("_PlanListPartial", filteredPlans);
         }
 
         public IActionResult AddExerciseModal(int planId)
