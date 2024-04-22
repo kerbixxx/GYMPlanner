@@ -22,18 +22,15 @@ namespace GymPlanner.Infrastructure.Services
         private readonly IPlanExerciseFrequencyRepository _pefRepo;
         private readonly IExerciseRepository _exerciseRepo;
         private readonly IFrequencyRepository _frequencyRepo;
-        private readonly IRatingRepository _ratingRepo;
         public PlanService(IPlanRepository planRepo,
                            IPlanExerciseFrequencyRepository pefRepo,
                            IExerciseRepository exerciseRepository,
-                           IFrequencyRepository frequencyRepository,
-                           IRatingRepository ratingRepo)
+                           IFrequencyRepository frequencyRepository)
         {
             _planRepo = planRepo;
             _pefRepo = pefRepo;
             _exerciseRepo = exerciseRepository;
             _frequencyRepo = frequencyRepository;
-            _ratingRepo = ratingRepo;
         }
 
 
