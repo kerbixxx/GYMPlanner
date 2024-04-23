@@ -5,7 +5,7 @@ using GymPlanner.Application.Interfaces.Services;
 using GymPlanner.Infrastructure.Repositories;
 using GymPlanner.Infrastructure.Repositories.Chat;
 using GymPlanner.Infrastructure.Repositories.Plan;
-using GymPlanner.Infrastructure.Services;
+using GymPlanner.Application.Services;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,12 +26,6 @@ namespace GymPlanner.Infrastructure
             return services;
         }
 
-        public static IServiceCollection AddCustomServices(this IServiceCollection services)
-        {
-            services.AddSingleton<IUserIdProvider, UserIdProvider>();
-            services.AddTransient<IPlanService,PlanService>();
-            services.AddTransient<IRatingService,RatingService>();
-            return services;
-        }
+
     }
 }

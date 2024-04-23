@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GymPlanner.Infrastructure.Services
+namespace GymPlanner.Application.Services
 {
     public class RatingService : IRatingService
     {

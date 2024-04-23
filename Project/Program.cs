@@ -27,7 +27,7 @@ builder.Services.AddSignalR(options =>
     options.EnableDetailedErrors = true;
 });
 
-
+builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 builder.Services.AddRepositories();
 builder.Services.AddCustomServices();
 builder.Services.AddApplication();

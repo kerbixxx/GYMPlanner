@@ -1,7 +1,7 @@
 ﻿using GymPlanner.Application.Interfaces.Repositories;
 using GymPlanner.Application.Interfaces.Repositories.Chat;
 using GymPlanner.Domain.Entities.Chat;
-using GymPlanner.Infrastructure.Services;
+using GymPlanner.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using GymPlanner.Application.Interfaces.Services;
+using GymPlanner.Application.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace GymPlanner.Application
@@ -14,6 +16,12 @@ namespace GymPlanner.Application
                 options.RegisterServicesFromAssembly(assembly);
             });
 
+            return services;
+        }
+        public static IServiceCollection AddCustomServices(this IServiceCollection services)
+        {
+            services.AddTransient<IPlanService, PlanService>();
+            services.AddTransient<IRatingService, RatingService>();
             return services;
         }
     }

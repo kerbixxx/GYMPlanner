@@ -2,7 +2,6 @@
 using GymPlanner.Application.Interfaces.Services;
 using GymPlanner.Application.Models.Plan;
 using GymPlanner.Domain.Entities.Plans;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GymPlanner.Infrastructure.Services
+namespace GymPlanner.Application.Services
 {
     public class PlanService : IPlanService
     {
@@ -260,7 +259,5 @@ namespace GymPlanner.Infrastructure.Services
                 await _pefRepo.AddAsync(pef);
             }
         }
-
-
     }
 }
