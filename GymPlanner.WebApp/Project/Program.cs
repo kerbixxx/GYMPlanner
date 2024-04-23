@@ -28,6 +28,7 @@ builder.Services.AddSignalR(options =>
 });
 
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
+builder.Services.AddInfrastructureServices();
 builder.Services.AddRepositories();
 builder.Services.AddCustomServices();
 builder.Services.AddApplication();
