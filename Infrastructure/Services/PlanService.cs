@@ -22,15 +22,18 @@ namespace GymPlanner.Infrastructure.Services
         private readonly IPlanExerciseFrequencyRepository _pefRepo;
         private readonly IExerciseRepository _exerciseRepo;
         private readonly IFrequencyRepository _frequencyRepo;
+        private readonly IRatingService _ratingService;
         public PlanService(IPlanRepository planRepo,
                            IPlanExerciseFrequencyRepository pefRepo,
                            IExerciseRepository exerciseRepository,
-                           IFrequencyRepository frequencyRepository)
+                           IFrequencyRepository frequencyRepository,
+                           IRatingService ratingService)
         {
             _planRepo = planRepo;
             _pefRepo = pefRepo;
             _exerciseRepo = exerciseRepository;
             _frequencyRepo = frequencyRepository;
+            _ratingService = ratingService;
         }
 
 
@@ -68,15 +71,47 @@ namespace GymPlanner.Infrastructure.Services
             return await _planRepo.GetAll();
         }
 
-        public async Task<List<Plan>> GetFilteredPlans(string tag)
+        public async Task<List<GetPlansOnIndexDto>> GetFilteredPlans(string? tag, string? sortBy, string? sortOrder)
         {
             var plans = await _planRepo.GetAll();
-            if(tag == null)
+            List<Plan> filteredPlans = new();
+            if(tag != null)
             {
-                return plans;
+                filteredPlans = plans.Where(t => t.Tags.Any(t=>t.Contains(tag))).ToList();
             }
-            var filteredPlans = plans.Where(t => t.Tags.Any(t=>t.Contains(tag))).ToList();
-            return filteredPlans;
+            else
+            {
+                filteredPlans = plans;
+            }
+            List<GetPlansOnIndexDto> plansDto = new();
+            foreach(var plan in filteredPlans)
+            {
+                var planDto = new GetPlansOnIndexDto()
+                {
+                    UserId = plan.UserId,
+                    PlanId = plan.Id,
+                    FullDescription = plan.FullDescription,
+                    MenuDescription = plan.MenuDescription,
+                    CreatedAt = plan.CreatedAt,
+                    Name = plan.Name,
+                    Tags = plan.TagsDb,
+                };
+                planDto.AverageRating = await _ratingService.GetAverageRatingForPlan(plan.Id);
+                plansDto.Add(planDto);
+            }
+            if (sortBy != null)
+            {
+                if (sortBy == "Rating")
+                {
+                    plansDto = sortOrder == "asc" ? plansDto.OrderBy(t => t.AverageRating).ToList() : plansDto.OrderByDescending(t => t.AverageRating).ToList();
+                }
+                if (sortBy == "CreatedDate")
+                {
+                    plansDto = sortOrder == "asc" ? plansDto.OrderBy(t => t.CreatedAt).ToList() : plansDto.OrderByDescending(t => t.CreatedAt).ToList();
+                }
+                //Сортировка по комментариям
+            }
+            return plansDto;
         }
 
         public async Task UpdatePlanAsync(PlanEditDto planDto)

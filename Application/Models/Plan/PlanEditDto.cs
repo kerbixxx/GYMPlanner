@@ -19,6 +19,7 @@ namespace GymPlanner.Application.Models.Plan
         public List<Frequency> Frequencies { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string? TagsString { get; set; }
+        public double? AverageRating { get; set; }
     }
 
     public record class ExerciseFrequencyDto

@@ -23,6 +23,12 @@
                         <option value="CommentCount">Количество комментариев</option>
                         <option value="CreatedDate">Дата создания</option>
                     </select>
+                    <label class="input-group-text" for="inputSortOrder">В порядке:</label>
+                    <select class="form-select" id="inputSortOrder">
+                        <option selected>Выбор...</option>
+                        <option value="asc">Возрастания</option>
+                        <option value="desc">Убывания</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -57,10 +63,12 @@
     $(document).ready(function () {
         function loadFilteredPlans() {
             var tagFilter = $('#tagFilter').val(); 
+            var sortBy = $('#inputSortBy').val();
+            var sortOrder = $('#inputSortOrder').val();
             $.ajax({
                 url: '/Plan/GetFilteredPlans', 
                 type: 'GET',
-                data: { tag: tagFilter }, 
+                data: { tag: tagFilter, sortBy: sortBy, sortOrder: sortOrder},
                 success: function (response) {
                     $('.searchResults').html(response);
                 },

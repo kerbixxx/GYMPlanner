@@ -53,9 +53,9 @@ namespace GymPlanner.WebUI.Controllers
             return await Edit(planDto);
         }
 
-        public async Task<IActionResult> GetFilteredPlans(string tag)
+        public async Task<IActionResult> GetFilteredPlans(string tag, string sortBy, string sortOrder)
         {
-            var filteredPlans = await _planService.GetFilteredPlans(tag);
+            var filteredPlans = await _planService.GetFilteredPlans(tag, sortBy, sortOrder);
             return PartialView("_PlanListPartial", filteredPlans);
         }
 

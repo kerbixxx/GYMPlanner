@@ -20,6 +20,6 @@ namespace GymPlanner.Application.Interfaces.Services
         Task DeleteFrequencyFromPlan(int id);
         Task DeleteExerciseFromPlan(int id);
         Task DeletePlanAsync(int id);
-        Task<List<Plan>> GetFilteredPlans(string tag);
+        Task<List<GetPlansOnIndexDto>> GetFilteredPlans(string? tag, string? sortBy, string? sortOrder);
     }
 }
