@@ -8,6 +8,7 @@ using GymPlanner.Infrastructure.Repositories.Plan;
 using GymPlanner.Application.Services;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using GymPlanner.Infrastructure.Services;
 
 namespace GymPlanner.Infrastructure
 {
@@ -25,7 +26,10 @@ namespace GymPlanner.Infrastructure
             services.AddScoped<IRatingRepository, RatingRepository>();
             return services;
         }
-
-
+        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+        {
+            services.AddScoped<IEmailService, EmailService>();
+            return services;
+        }
     }
 }
