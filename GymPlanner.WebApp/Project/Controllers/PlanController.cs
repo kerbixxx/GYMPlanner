@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using RabbitMQ.Client;
 using System.Security.Cryptography.Xml;
 
 namespace GymPlanner.WebUI.Controllers
@@ -17,12 +18,14 @@ namespace GymPlanner.WebUI.Controllers
         private readonly IUserRepository _userRepo;
         private readonly IRatingService _ratingService;
         private readonly IRabbitMQProducer _rabbitmqProducer;
-        public PlanController(IPlanService planService, IUserRepository userRepo, IRatingService ratingService, IRabbitMQProducer rabbitMQProducer)
+        private readonly ISubscriptionRepository _subscriptionRepository;
+        public PlanController(IPlanService planService, IUserRepository userRepo, IRatingService ratingService, IRabbitMQProducer rabbitMQProducer, ISubscriptionRepository subscribtionRepository)
         {
             _planService = planService;
             _userRepo = userRepo;
             _ratingService = ratingService;
             _rabbitmqProducer = rabbitMQProducer;
+            _subscriptionRepository = subscribtionRepository;
         }
         public IActionResult Index()
         {
@@ -31,7 +34,8 @@ namespace GymPlanner.WebUI.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var planDto = await _planService.GetPlanEditDtoAsync(id);
+            var user = await _userRepo.FindByNameAsync(User.Identity.Name);
+            var planDto = await _planService.GetPlanDetailsDtoAsync(id,user.Id);
             return View(planDto);
         }
 
@@ -138,6 +142,30 @@ namespace GymPlanner.WebUI.Controllers
         {
             await _planService.DeletePlanAsync(planId);
             return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubscribeToPlan(int planId)
+        {
+            var user = await _userRepo.FindByNameAsync(User.Identity.Name);
+            var obj = new Subscription()
+            {
+                UserId = user.Id,
+                PlanId = planId
+            };
+            await _subscriptionRepository.AddAsync(obj);
+            TempData["SuccessMessage"] = "Подписка на план оформлена";
+            return RedirectToAction("Details", new { Id = planId });
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> UnsubscribeFromPlan(int planId)
+        {
+            var user = await _userRepo.FindByNameAsync(User.Identity.Name);
+            var subscription = _subscriptionRepository.FirstOrDefault(p=>(p.PlanId == planId)&&(p.UserId==user.Id));
+            await _subscriptionRepository.RemoveAsync(subscription);
+            TempData["SuccessMessage"] = "Подписка удалена";
+            return RedirectToAction("Details", new { Id = planId });
         }
     }
 }

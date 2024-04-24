@@ -1,5 +1,15 @@
 ﻿@using GymPlanner.Application.Models.Plan;
-@model PlanEditDto
+@model PlanDetailsDto
+@{
+    string successMessage = TempData["SuccessMessage"] as string;
+}
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success" role="alert">
+        @successMessage
+    </div>
+}
 
 <div class="border b3">
     <div class="row pt-4">
@@ -13,6 +23,14 @@
     <div class="row">
         <div class="col-12">
             <button id="ratePlan" class="btn btn-primary">Оценить план</button>
+            @if (Model.IsSubscribed == false)
+            {
+                <button id="subscribeToPlan" class="btn btn-primary">Подписаться на план</button>
+            }
+            else
+            {
+                <button id="unsubscribeFromPlan" class="btn btn-primary">Отписаться от плана</button>
+            }
         </div>
     </div>
     <br /><br />
@@ -26,7 +44,6 @@
                             <td>Упражнения/Дни</td>
                             @for (int i = 0; i < Model.Frequencies.Count; i++)
                             {
-
                                 <td>@Model.Frequencies[i].Name</td>
                             }
                         </tr>
@@ -82,6 +99,39 @@
                     },
                     error: function (xhr, status, error) {
                         console.error('Ошибка при оценке плана:', error);
+                    }
+                });
+            });
+            $('#subscribeToPlan').click(function () {
+                var planId = '@Model.PlanId';
+
+                $.ajax({
+                    url: '/Plan/SubscribeToPlan',
+                    type: 'POST',
+                    data: { planId: planId },
+                    success: function (response) {
+                        console.log('Subscription has been successfully added');
+                        window.location.href = '/Plan/Details/' + planId;
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error subscribing to plan:', error);
+                    }
+                });
+            });
+
+            $('#unsubscribeFromPlan').click(function () {
+                var planId = '@Model.PlanId';
+
+                $.ajax({
+                    url: '/Plan/UnsubscribeFromPlan',
+                    type: 'DELETE',
+                    data: { planId: planId },
+                    success: function (response) {
+                        console.log('Subscription has been successfully deleted');
+                        window.location.href = '/Plan/Details/' + planId;
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error unsubscribing from plan:', error);
                     }
                 });
             });

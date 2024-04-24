@@ -12,6 +12,7 @@ namespace GymPlanner.Application.Interfaces.Services
     {
         Task UpdatePlanAsync(Plan plan);
         Task<PlanEditDto> GetPlanEditDtoAsync(int id);
+        Task<PlanDetailsDto> GetPlanDetailsDtoAsync(int id, int userId);
         Task<List<Plan>> GetAllPlansAsync();
         Task UpdatePlanAsync(PlanEditDto planDto);
         Task AddExerciseToPlan(ExerciseDto dto);

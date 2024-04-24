@@ -18,7 +18,6 @@ namespace GymPlanner.WebUI.Controllers
         public IActionResult Index()
         {
             return View();
-            //return Content(User.Identity.Name);
         }
 
         public IActionResult Privacy()
@@ -29,7 +28,6 @@ namespace GymPlanner.WebUI.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            //return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             return View();
         }
     }

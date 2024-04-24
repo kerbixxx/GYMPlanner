@@ -30,7 +30,7 @@ namespace GymPlanner.Infrastructure.Services
                                arguments: null);
                 var json = JsonConvert.SerializeObject(message);
                 var body = Encoding.UTF8.GetBytes(json);
-                channel.BasicPublish(exchange: "test",
+                channel.BasicPublish(exchange: "",
                                routingKey: "MyQueue",
                                basicProperties: null,
                                body: body);

@@ -21,6 +21,7 @@ namespace GymPlanner.Infrastructure.Contexts
         public DbSet<Message> Messages { get; set; }
         public DbSet<Dialog> Dialogs { get; set; }
         public DbSet<Rating> Ratings { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
         public PlanDbContext(DbContextOptions<PlanDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,7 +42,20 @@ namespace GymPlanner.Infrastructure.Contexts
             modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
             modelBuilder.Entity<User>().HasData(new User[] { adminUser });
 
+            modelBuilder.Entity<Subscription>().HasKey(k=>new {k.PlanId, k.UserId});
             modelBuilder.Entity<Rating>().HasKey(k => new { k.PlanId, k.UserId });
+
+            modelBuilder.Entity<Subscription>()
+                .HasOne(r => r.Plan)
+                .WithMany()
+                .HasForeignKey(r => r.PlanId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Subscription>()
+                .HasOne(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Rating>()
                 .HasOne(r => r.User)

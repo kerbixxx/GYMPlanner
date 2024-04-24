@@ -22,17 +22,20 @@ namespace GymPlanner.Application.Services
         private readonly IExerciseRepository _exerciseRepo;
         private readonly IFrequencyRepository _frequencyRepo;
         private readonly IRatingService _ratingService;
+        private readonly ISubscriptionRepository _subscribionRepository;
         public PlanService(IPlanRepository planRepo,
                            IPlanExerciseFrequencyRepository pefRepo,
                            IExerciseRepository exerciseRepository,
                            IFrequencyRepository frequencyRepository,
-                           IRatingService ratingService)
+                           IRatingService ratingService,
+                           ISubscriptionRepository subscribionRepository)
         {
             _planRepo = planRepo;
             _pefRepo = pefRepo;
             _exerciseRepo = exerciseRepository;
             _frequencyRepo = frequencyRepository;
             _ratingService = ratingService;
+            _subscribionRepository = subscribionRepository;
         }
 
 
@@ -258,6 +261,39 @@ namespace GymPlanner.Application.Services
                 };
                 await _pefRepo.AddAsync(pef);
             }
+        }
+
+        public async Task<PlanDetailsDto> GetPlanDetailsDtoAsync(int id, int userId)
+        {
+            var plan = await _planRepo.GetAsync(id);
+            var excfreqList = new List<ExerciseFrequencyDto>();
+            foreach (var pef in plan.planExersiseFrequencies)
+            {
+                var excfreq = new ExerciseFrequencyDto()
+                {
+                    Description = pef.Description,
+                    ExerciseId = pef.Exercise.Id,
+                    FrequencyId = pef.FrequencyId,
+                    Id = pef.Id
+                };
+                excfreqList.Add(excfreq);
+            }
+            var isSubbed = _subscribionRepository.FirstOrDefault(p=>(p.PlanId == id) && (p.UserId == userId));
+            var planDto = new PlanDetailsDto()
+            {
+                PlanId = plan.Id,
+                ExerciseFrequencies = excfreqList,
+                Name = plan.Name,
+                Exercises = plan.planExersiseFrequencies.Select(pef => pef.Exercise).Distinct().ToList(),
+                Frequencies = plan.planExersiseFrequencies.Select(pef => pef.Frequency).Distinct().ToList(),
+                UserId = plan.UserId,
+                MenuDescription = plan.MenuDescription,
+                FullDescription = plan.FullDescription,
+                CreatedAt = plan.CreatedAt,
+                TagsString = plan.TagsDb,
+                IsSubscribed = isSubbed!=null
+            };
+            return planDto;
         }
     }
 }
