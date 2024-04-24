@@ -17,7 +17,8 @@ namespace GymPlanner.Infrastructure.Services
         {
             var factory = new ConnectionFactory
             {
-                HostName = "localhost"
+                HostName = "localhost",
+                Port = 5672
             };
             using (var connection = factory.CreateConnection())
             using(var channel = connection.CreateModel())
@@ -29,7 +30,7 @@ namespace GymPlanner.Infrastructure.Services
                                arguments: null);
                 var json = JsonConvert.SerializeObject(message);
                 var body = Encoding.UTF8.GetBytes(json);
-                channel.BasicPublish(exchange: "",
+                channel.BasicPublish(exchange: "test",
                                routingKey: "MyQueue",
                                basicProperties: null,
                                body: body);
