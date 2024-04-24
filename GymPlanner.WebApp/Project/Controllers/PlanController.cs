@@ -29,6 +29,7 @@ namespace GymPlanner.WebUI.Controllers
         }
         public IActionResult Index()
         {
+            _rabbitmqProducer.SendProductMessage("Test message");
             return View();
         }
 

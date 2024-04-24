@@ -18,7 +18,7 @@ namespace GymPlanner.Infrastructure.Services
             var factory = new ConnectionFactory
             {
                 HostName = "localhost",
-                Port = 5672
+                Port = 5673
             };
             using (var connection = factory.CreateConnection())
             using(var channel = connection.CreateModel())
