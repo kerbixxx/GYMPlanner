@@ -23,12 +23,14 @@ namespace GymPlanner.Application.Services
         private readonly IFrequencyRepository _frequencyRepo;
         private readonly IRatingService _ratingService;
         private readonly ISubscriptionRepository _subscribionRepository;
+        private readonly IRabbitMQProducer _rabbitMQProducer;
         public PlanService(IPlanRepository planRepo,
                            IPlanExerciseFrequencyRepository pefRepo,
                            IExerciseRepository exerciseRepository,
                            IFrequencyRepository frequencyRepository,
                            IRatingService ratingService,
-                           ISubscriptionRepository subscribionRepository)
+                           ISubscriptionRepository subscribionRepository,
+                           IRabbitMQProducer rabbitMQProducer)
         {
             _planRepo = planRepo;
             _pefRepo = pefRepo;
@@ -36,6 +38,7 @@ namespace GymPlanner.Application.Services
             _frequencyRepo = frequencyRepository;
             _ratingService = ratingService;
             _subscribionRepository = subscribionRepository;
+            _rabbitMQProducer = rabbitMQProducer;
         }
 
 
@@ -141,6 +144,17 @@ namespace GymPlanner.Application.Services
             foreach (var frequency in planDto.Frequencies)
             {
                 await _frequencyRepo.UpdateAsync(frequency);
+            }
+            await NotifyAllSubscribers(plan.Id);
+        }
+
+        private async Task NotifyAllSubscribers(int planId)
+        {
+            var allSubscribers = await _subscribionRepository.GetSubscriptionsOnPlanAsync(planId);
+            foreach (var subscriber in allSubscribers)
+            {
+                //TODO: Отправлять емейл и название измененного плана. Можно в JSON
+                //_rabbitMQProducer.SendProductMessage($"{subscriber.User.Email},");
             }
         }
 

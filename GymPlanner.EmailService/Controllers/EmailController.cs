@@ -2,6 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
+using RabbitMQ.Client.Events;
+using RabbitMQ.Client;
+using System.Text;
+using EmailService.Services;
 
 namespace EmailService.Controllers
 {

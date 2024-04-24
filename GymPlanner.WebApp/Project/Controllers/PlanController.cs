@@ -17,19 +17,16 @@ namespace GymPlanner.WebUI.Controllers
         private readonly IPlanService _planService;
         private readonly IUserRepository _userRepo;
         private readonly IRatingService _ratingService;
-        private readonly IRabbitMQProducer _rabbitmqProducer;
         private readonly ISubscriptionRepository _subscriptionRepository;
-        public PlanController(IPlanService planService, IUserRepository userRepo, IRatingService ratingService, IRabbitMQProducer rabbitMQProducer, ISubscriptionRepository subscribtionRepository)
+        public PlanController(IPlanService planService, IUserRepository userRepo, IRatingService ratingService, ISubscriptionRepository subscribtionRepository)
         {
             _planService = planService;
             _userRepo = userRepo;
             _ratingService = ratingService;
-            _rabbitmqProducer = rabbitMQProducer;
             _subscriptionRepository = subscribtionRepository;
         }
         public IActionResult Index()
         {
-            _rabbitmqProducer.SendProductMessage("Test message");
             return View();
         }
 
@@ -54,7 +51,6 @@ namespace GymPlanner.WebUI.Controllers
             {
                 await _planService.UpdatePlanAsync(planDto);
                 TempData["SuccessMessage"] = "План успешно обновлен.";
-                _rabbitmqProducer.SendProductMessage($"{planDto.Name} успешно обновлен");
                 return RedirectToAction("Edit", new { id = planDto.PlanId });
             }
             return await Edit(planDto);
