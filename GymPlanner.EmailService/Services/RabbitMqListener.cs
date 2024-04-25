@@ -36,7 +36,6 @@ namespace EmailService.Services
             }
             finally
             {
-                // Выключение
                 _channel?.Close();
                 _connection?.Close();
             }

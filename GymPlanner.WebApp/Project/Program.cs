@@ -5,6 +5,7 @@ using GymPlanner.Application;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.SignalR;
 using GymPlanner.WebUI.Hubs;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
