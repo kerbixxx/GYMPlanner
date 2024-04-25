@@ -153,9 +153,10 @@ namespace GymPlanner.Application.Services
             var allSubscribers = await _subscribionRepository.GetSubscriptionsOnPlanAsync(planId);
             foreach (var subscriber in allSubscribers)
             {
-                //TODO: Отправлять емейл и название измененного плана. Можно в JSON
-                //_rabbitMQProducer.SendProductMessage($"{subscriber.User.Email},");
+                _rabbitMQProducer.NotifySubscribersAboutEdit(new MessageEditNotifier() { PlanName = subscriber.Plan.Name, SubscriberEmail = subscriber.User.Email});
+                
             }
+            _rabbitMQProducer.Dispose();
         }
 
         public async Task AddExerciseToPlan(ExerciseDto dto)

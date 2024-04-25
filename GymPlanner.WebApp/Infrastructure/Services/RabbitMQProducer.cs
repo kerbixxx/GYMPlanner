@@ -1,4 +1,5 @@
 ﻿using GymPlanner.Application.Interfaces.Services;
+using GymPlanner.Application.Models.Plan;
 using GymPlanner.Domain.Entities.Plans;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -13,15 +14,40 @@ namespace GymPlanner.Infrastructure.Services
 {
     public class RabbitMQProducer : IRabbitMQProducer
     {
-        public void SendProductMessage<T>(T message)
+        private readonly ConnectionFactory _factory;
+        private readonly IConnection _connection;
+
+        public RabbitMQProducer()
         {
-            var factory = new ConnectionFactory
+            _factory = new ConnectionFactory
             {
                 HostName = "localhost",
                 Port = 5673
             };
-            using (var connection = factory.CreateConnection())
-            using(var channel = connection.CreateModel())
+
+            _connection = _factory.CreateConnection();
+        }
+
+        public void NotifySubscribersAboutEdit(MessageEditNotifier message)
+        {
+            using (var channel = _connection.CreateModel())
+            {
+                channel.QueueDeclare(queue: "EmailQueue",
+                                durable: false,
+                               exclusive: false,
+                               autoDelete: false,
+                               arguments: null);
+                var json = JsonConvert.SerializeObject(message);
+                var body = Encoding.UTF8.GetBytes(json);
+                channel.BasicPublish(exchange: "",
+                               routingKey: "EmailQueue",
+                               basicProperties: null,
+                               body: body);
+            }
+        }
+        public void SendMessageToRabbit<T>(T message)
+        {
+            using (var channel = _connection.CreateModel())
             {
                 channel.QueueDeclare(queue: "MyQueue",
                                durable: false,
@@ -36,5 +62,10 @@ namespace GymPlanner.Infrastructure.Services
                                body: body);
             }
         }
+        public void Dispose()
+        {
+            _connection?.Dispose();
+        }
+
     }
 }

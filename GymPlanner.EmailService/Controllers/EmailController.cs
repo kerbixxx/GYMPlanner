@@ -6,6 +6,7 @@ using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
 using System.Text;
 using EmailService.Services;
+using Hangfire;
 
 namespace EmailService.Controllers
 {
@@ -13,31 +14,35 @@ namespace EmailService.Controllers
     [ApiController]
     public class EmailController : ControllerBase
     {
+        private readonly RabbitMqListener _rabbitMqListener;
+        public EmailController()
+        {
+            _rabbitMqListener = new RabbitMqListener();
+        }
         [HttpGet]
         public IActionResult Email()
         {
+            SendEmail("test@test.com", "test");
+            return Ok();
+        }
+
+        private void SendEmail(string email, string planName)
+        {
             var message = new MimeMessage();
-            //от кого отправляем и заголовок
-            message.From.Add(new MailboxAddress("Test Project",HiddenData.SenderEmailLogin));
-            //кому отправляем
-            message.To.Add(new MailboxAddress("Tom", "test@test.ru"));
-            //тема письма
-            message.Subject = "Тестовое письмо для приятеля!";
-            //тело письма
+            message.From.Add(new MailboxAddress("GymPlanner", HiddenData.SenderEmailLogin));
+            message.To.Add(new MailboxAddress("Пользователь", email));
+            message.Subject = $"Изменен план";
             message.Body = new TextPart("plain")
             {
-                Text = "Доброго времени суток. Если вы получили это пис"
+                Text = $"Доброго времени суток. Если вы получили это письмо, значит вы были подписаны на план {planName} и он был изменен."
             };
             using (var client = new SmtpClient())
             {
-                //Указываем smtp сервер почты и порт
                 client.Connect("smtp.gmail.com", 587, false);
-                //Указываем свой Email адрес и пароль приложения
                 client.Authenticate(HiddenData.SenderEmailLogin, HiddenData.SenderEmailPassword);
                 client.Send(message);
                 client.Disconnect(true);
             }
-            return Ok();
         }
     }
 }

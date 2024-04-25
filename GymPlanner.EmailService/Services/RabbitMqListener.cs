@@ -1,49 +1,61 @@
-﻿using Microsoft.AspNetCore.Connections;
+﻿using EmailService.DTOs;
+using MailKit.Net.Smtp;
+using MimeKit;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Diagnostics;
 using System.Text;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace EmailService.Services
 {
-    public class RabbitMqListener : BackgroundService
+    public class RabbitMqListener
     {
-        private IConnection _connection;
-        private IModel _channel;
-
+        private readonly IConnection _connection;
+        private readonly IModel _channel;
         public RabbitMqListener()
         {
             var factory = new ConnectionFactory { HostName = "localhost", Port = 5673 };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
-            _channel.QueueDeclare(queue: "MyQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);
+            _channel.QueueDeclare(queue: "EmailQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        public void Consume()
         {
-            stoppingToken.ThrowIfCancellationRequested();
-
+            MessagePlanEditConsumer message = new();
             var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += (ch, ea) =>
+            consumer.Received += (model, ea) =>
             {
-                var content = Encoding.UTF8.GetString(ea.Body.ToArray());
-                // Каким-то образом обрабатываем полученное сообщение
-                Console.WriteLine($"Получено сообщение: {content}");
-
-                _channel.BasicAck(ea.DeliveryTag, false);
+                var body = ea.Body.ToArray();
+                var json = Encoding.UTF8.GetString(body);
+                message = JsonConvert.DeserializeObject<MessagePlanEditConsumer>(json);
+                SendEmail(message.SubscriberEmail, message.PlanName);
             };
 
-            _channel.BasicConsume("MyQueue", false, consumer);
-
-            return Task.CompletedTask;
+            _channel.BasicConsume(queue: "EmailQueue", autoAck: true, consumer: consumer);
         }
-
-        public override void Dispose()
+        private void SendEmail(string email, string planName)
+        {
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("GymPlanner", HiddenData.SenderEmailLogin));
+            message.To.Add(new MailboxAddress("Пользователь", email));
+            message.Subject = $"Изменен план";
+            message.Body = new TextPart("plain")
+            {
+                Text = $"Доброго времени суток. Если вы получили это письмо, значит вы были подписаны на план {planName} и он был изменен."
+            };
+            using (var client = new SmtpClient())
+            {
+                client.Connect("smtp.gmail.com", 587, false);
+                client.Authenticate(HiddenData.SenderEmailLogin, HiddenData.SenderEmailPassword);
+                client.Send(message);
+                client.Disconnect(true);
+            }
+        }
+        public void Dispose()
         {
             _channel.Close();
             _connection.Close();
-            base.Dispose();
         }
     }
 }
