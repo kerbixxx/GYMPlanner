@@ -7,3 +7,20 @@
     <a href="@Url.Action("Messages", "Chat", new { dialogId = dialog.Id })">@dialog.OtherUserName</a>
     <br />
 }
+
+<div id="app">
+    <h1 class="display-4">{{message}}</h1>
+</div>
+
+@section Scripts{
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    message: `Vue in the works!`
+                }
+            }
+        });
+        app.mount('#app');
+    </script>
+}
