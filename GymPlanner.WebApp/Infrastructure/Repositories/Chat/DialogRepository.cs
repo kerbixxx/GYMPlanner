@@ -1,5 +1,6 @@
 ﻿using GymPlanner.Application.Interfaces.Repositories.Chat;
 using GymPlanner.Domain.Entities.Chat;
+using GymPlanner.Domain.Entities.Identity;
 using GymPlanner.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -36,9 +37,18 @@ namespace GymPlanner.Infrastructure.Repositories.Chat
         public override async Task<Dialog> GetAsync(int id)
         {
             return await _db.Dialogs
-                .Include(d=>d.User)
-                .Include(d=>d.OtherUser)
-                .Include(d=>d.Messages)
+                .Include(d => d.User)
+                .Include(d => d.OtherUser)
+                .Include(d => d.Messages)
+                .Select(d => new Dialog()
+                {
+                    UserId = d.UserId,
+                    OtherUserId = d.OtherUserId,
+                    Messages = d.Messages,
+                    Id = d.Id,
+                    User = new User { Email = d.User.Email },
+                    OtherUser = new User { Email = d.OtherUser.Email}
+                })
                 .FirstOrDefaultAsync(d=>d.Id == id);
         }
     }

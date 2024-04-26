@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace GymPlanner.WebUI.Controllers
 {
@@ -41,15 +43,16 @@ namespace GymPlanner.WebUI.Controllers
             return View(dialogDtos);
         }
 
-        public async Task<IActionResult> Messages(string dialogId)
+        [Route("[Controller]/Messages/{dialogId}")]
+        public async Task<IActionResult> Messages([FromRoute]int dialogId)
         {
             try
             {
-                var dialog = await _dialogRepository.GetAsync(int.Parse(dialogId));
+                var dialog = await _dialogRepository.GetAsync(dialogId);
 
                 var messageDto = new MessagesDto()
                 {
-                    DialogId = int.Parse(dialogId),
+                    DialogId = dialogId,
                     Messages = dialog.Messages
                 };
                 if (dialog.User.Email == User.Identity.Name)
@@ -65,8 +68,16 @@ namespace GymPlanner.WebUI.Controllers
                     messageDto.SenderName = dialog.OtherUser.Email;
                     messageDto.ReceiverId = dialog.UserId;
                     messageDto.ReceiverName = dialog.User.Email;
-                    return new JsonResult(messageDto);
                 }
+                var options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    // Optionally, you can set other options like PropertyNamingPolicy, etc.
+                };
+
+                var json = JsonSerializer.Serialize(messageDto, options);
+
+                return Ok(json);
             }
             catch (Exception ex)
             {
@@ -74,7 +85,7 @@ namespace GymPlanner.WebUI.Controllers
             }
             return BadRequest();
         }
-
+        [Route("[Controller]/FindDialog/{userId}")]
         public async Task<IActionResult> FindDialog(int userId)
         {
             var user = await _userRepository.FindByNameAsync(User.Identity.Name);

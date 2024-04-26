@@ -7,19 +7,29 @@
     </div>
 </div>
 <div id="message-display">
-    <div v-for="message in messages">
+    <div v-for="message in messages.messages">
         <p>
-            {{ message.Content }}
+            {{message.content}}
         </p>
     </div>
 </div>
 @section Scripts{
     <script>
+        const store = {
+            state: Vue.reactive({
+                messages: []
+            }),
+            mutations: {
+                updateMessages(messages) {
+                    store.state.messages = messages;
+                }
+            }
+        };
+
         const chatSelector = Vue.createApp({
             data() {
                 return {
-                    dialogs: @Html.Raw(Json.Serialize(Model)),
-                    messages: ''
+                    dialogs: @Html.Raw(Json.Serialize(Model))
                 }
             },
             methods: {
@@ -27,7 +37,7 @@
                     fetch(`/Chat/Messages/${dialogId}`)
                         .then(response => response.json())
                         .then(data => {
-                            this.messages = data;
+                            store.mutations.updateMessages(data);
                         })
                         .catch(error => console.error('Ошибка:', error));
                 }
@@ -35,16 +45,17 @@
         });
         chatSelector.mount('#chat-selector');
 
-        const messageDisplay = Vue.createApp({
-            data() {
-                return {
-                    messages: []
-                }
-            },
-            methods: {
-                loadMessages(dialogId) {
+        const { ref, watchEffect } = Vue;
 
-                }
+        const messageDisplay = Vue.createApp({
+            setup() {
+                const messages = ref([]); 
+                watchEffect(() => {
+                    messages.value = store.state.messages;
+                });
+                return {
+                    messages,
+                };
             }
         });
         messageDisplay.mount('#message-display');
