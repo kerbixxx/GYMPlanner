@@ -1,26 +1,52 @@
 ﻿@using GymPlanner.Application.Models.Chat;
-<!-- Index.cshtml -->
 @model List<DialogDto>
 
-@foreach (var dialog in Model)
-{
-    <a href="@Url.Action("Messages", "Chat", new { dialogId = dialog.Id })">@dialog.OtherUserName</a>
-    <br />
-}
-
-<div id="app">
-    <h1 class="display-4">{{message}}</h1>
+<div id="chat-selector">
+    <div v-for="dialog in dialogs" :key="dialog.id" v-on:click="selectChat(dialog.id)">
+        {{ dialog.otherUserName }} {{ dialog.id }}
+    </div>
 </div>
-
+<div id="message-display">
+    <div v-for="message in messages">
+        <p>
+            {{ message.Content }}
+        </p>
+    </div>
+</div>
 @section Scripts{
     <script>
-        const app = Vue.createApp({
+        const chatSelector = Vue.createApp({
             data() {
                 return {
-                    message: `Vue in the works!`
+                    dialogs: @Html.Raw(Json.Serialize(Model)),
+                    messages: ''
+                }
+            },
+            methods: {
+                selectChat(dialogId) {
+                    fetch(`/Chat/Messages/${dialogId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.messages = data;
+                        })
+                        .catch(error => console.error('Ошибка:', error));
                 }
             }
         });
-        app.mount('#app');
+        chatSelector.mount('#chat-selector');
+
+        const messageDisplay = Vue.createApp({
+            data() {
+                return {
+                    messages: []
+                }
+            },
+            methods: {
+                loadMessages(dialogId) {
+
+                }
+            }
+        });
+        messageDisplay.mount('#message-display');
     </script>
 }
