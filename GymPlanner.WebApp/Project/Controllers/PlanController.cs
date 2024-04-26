@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
+using Serilog;
 using System.Security.Cryptography.Xml;
 
 namespace GymPlanner.WebUI.Controllers
@@ -49,9 +50,17 @@ namespace GymPlanner.WebUI.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _planService.UpdatePlanAsync(planDto);
-                TempData["SuccessMessage"] = "План успешно обновлен.";
-                return RedirectToAction("Edit", new { id = planDto.PlanId });
+                try
+                {
+                    await _planService.UpdatePlanAsync(planDto);
+                    TempData["SuccessMessage"] = "План успешно обновлен.";
+                    return RedirectToAction("Edit", new { id = planDto.PlanId });
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Ошибка при обновлении плана");
+                    TempData["ErrorMessage"] = "Произошла ошибка при обновлении плана";
+                }
             }
             return await Edit(planDto);
         }
@@ -72,8 +81,16 @@ namespace GymPlanner.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddExerсise(ExerciseDto dto)
         {
-            await _planService.AddExerciseToPlan(dto);
-            return RedirectToAction("Edit", new { Id = dto.PlanId});
+            try
+            {
+                await _planService.AddExerciseToPlan(dto);
+            }
+            catch(Exception ex)
+            {
+                Log.Error(ex, "Ошибка при добавлении упражнения в план");
+                TempData["ErrorMessage"] = "Ошибка при добавлении упражнения в план";
+            }
+            return RedirectToAction("Edit", new { Id = dto.PlanId });
         }
 
         [HttpPost]
@@ -94,7 +111,15 @@ namespace GymPlanner.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddFrequency(FrequencyDto dto)
         {
-            await _planService.AddFrequencyToPlan(dto);
+            try
+            {
+                await _planService.AddFrequencyToPlan(dto);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Ошибка при добавлении частоты в план");
+                TempData["ErrorMessage"] = "Ошибка при добавлении частоты в план";
+            }
             return RedirectToAction("Edit", new { Id = dto.PlanId });
         }
 
