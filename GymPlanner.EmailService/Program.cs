@@ -1,3 +1,4 @@
+using EmailService.Interfaces;
 using EmailService.Services;
 using Hangfire;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +10,7 @@ builder.Services.AddHangfire(s => s.UseSqlServerStorage(builder.Configuration.Ge
 
 builder.Services.AddHangfireServer();
 builder.Services.AddTransient<RabbitMqListener>();
+builder.Services.AddTransient<IEmailSender,EmailSender>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
