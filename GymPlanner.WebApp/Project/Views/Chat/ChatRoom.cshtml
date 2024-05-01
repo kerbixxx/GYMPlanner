@@ -3,7 +3,7 @@
 
 <div id="chat-selector">
     <div v-for="dialog in dialogs" :key="dialog.id" v-on:click="selectChat(dialog.id)">
-        {{ dialog.otherUserName }} {{ dialog.id }}
+        {{ dialog.otherUserName }}
     </div>
 </div>
 <div id="inputForm" v-if="messages.Messages.$values.length > 0">
