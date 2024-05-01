@@ -93,6 +93,8 @@
                 selectChat(id) {
                     store.mutations.updateMessages([]);
 
+                    let chatroom = document.getElementById("chatroom");
+
                     fetch(`/Chat/Messages/${id}`)
                         .then(response => response.json())
                         .then(data => {
@@ -105,20 +107,9 @@
                             console.log(store.state.messages);
                             console.log(dialogId);
 
-                            let chatroom = document.getElementById("chatroom");
-                            chatroom.innerHTML = "";
-
-                            data.reverse().forEach(message => {
-                                let userNameElem = document.createElement("b");
-                                userNameElem.appendChild(document.createTextNode(getUserName(message.UserIdFrom) + ': '));
-
-                                let elem = document.createElement("p");
-                                elem.appendChild(userNameElem);
-                                elem.appendChild(document.createTextNode(message.Content));
-
-                                elem.setAttribute("data-source", "signalR");
-
-                                chatroom.appendChild(elem);
+                            let signalRElements = chatroom.querySelectorAll("[data-source='signalR']");
+                            signalRElements.forEach(element => {
+                                element.remove();
                             });
                         })
                         .catch(error => console.error('Ошибка:', error));

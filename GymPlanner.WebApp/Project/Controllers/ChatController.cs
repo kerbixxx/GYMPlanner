@@ -98,7 +98,7 @@ namespace GymPlanner.WebUI.Controllers
                 };
                 await _dialogRepository.AddAsync(dialog);
             }
-            return RedirectToAction("Messages", new { dialogId =  dialog.Id});
+            return RedirectToAction("ChatRoom");
         }
     }
 }
