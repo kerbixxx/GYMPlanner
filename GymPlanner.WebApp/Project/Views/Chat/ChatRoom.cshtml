@@ -6,15 +6,72 @@
         {{ dialog.otherUserName }} {{ dialog.id }}
     </div>
 </div>
+<div id="inputForm" v-if="messages.Messages.$values.length > 0">
+    <input type="text" id="message" />
+    <input type="button" id="sendBtn" value="Отправить" />
+</div>
 <div id="message-display">
-    <div v-for="message in messages.messages">
+    <div id="chatroom" v-for="message in messages.Messages.$values">
         <p>
-            {{message.content}}
+            <b>{{getUserName(message.UserIdFrom)}}:</b> {{ message.Content }}
         </p>
     </div>
 </div>
 @section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.7/signalr.min.js"></script>
+    <script src="https://unpkg.com/microsoft/signalr@3.1.0/dist/browser/signalr.min.js"></script>
     <script>
+        const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/chat")
+            .build();
+
+        let senderId = '';
+        let receiverId = '';
+        let dialogId = '';
+        let userName = '';
+        let receiverName = '';
+
+        hubConnection.on("SendMessage", function (message, userName) {
+            let userNameElem = document.createElement("b");
+            userNameElem.appendChild(document.createTextNode(userName + ': '));
+
+            let elem = document.createElement("p");
+            elem.setAttribute("data-source", "signalR"); // Помечаем элемент как созданный через SignalR
+            elem.appendChild(userNameElem);
+            elem.appendChild(document.createTextNode(message));
+
+            let firstElem = document.getElementById("chatroom").firstChild;
+            document.getElementById("chatroom").insertBefore(elem, firstElem);
+        });
+        document.getElementById("sendBtn").addEventListener("click", function (e) {
+            let message = document.getElementById("message").value;
+            hubConnection.invoke("SendMessage", senderId, receiverId, receiverName, dialogId, message)
+                .catch(function (err) {
+                    console.log(senderId, receiverId, receiverName, dialogId, message);
+                    return console.error(err.toString());
+                });
+        });
+        hubConnection.on("ReceiveMessage", function (userName, message) {
+            let userNameElem = document.createElement("b");
+            userNameElem.appendChild(document.createTextNode(userName + ': '));
+
+            let elem = document.createElement("p");
+            elem.setAttribute("data-source", "signalR"); // Помечаем элемент как созданный через SignalR
+            elem.appendChild(userNameElem);
+            elem.appendChild(document.createTextNode(message));
+
+            let firstElem = document.getElementById("chatroom").firstChild;
+            document.getElementById("chatroom").insertBefore(elem, firstElem);
+        });
+
+        hubConnection.start()
+            .then(function () {
+                document.getElementById("sendBtn").disabled = false;
+            })
+            .catch(function (err) {
+                return console.error(err.toString());
+            });
+
         const store = {
             state: Vue.reactive({
                 messages: []
@@ -33,11 +90,36 @@
                 }
             },
             methods: {
-                selectChat(dialogId) {
-                    fetch(`/Chat/Messages/${dialogId}`)
+                selectChat(id) {
+                    store.mutations.updateMessages([]);
+
+                    fetch(`/Chat/Messages/${id}`)
                         .then(response => response.json())
                         .then(data => {
                             store.mutations.updateMessages(data);
+                            senderId = store.state.messages.SenderId;
+                            receiverId = store.state.messages.ReceiverId;
+                            dialogId = store.state.messages.DialogId;
+                            userName = store.state.messages.SenderName;
+                            receiverName = store.state.messages.ReceiverName;
+                            console.log(store.state.messages);
+                            console.log(dialogId);
+
+                            let chatroom = document.getElementById("chatroom");
+                            chatroom.innerHTML = "";
+
+                            data.reverse().forEach(message => {
+                                let userNameElem = document.createElement("b");
+                                userNameElem.appendChild(document.createTextNode(getUserName(message.UserIdFrom) + ': '));
+
+                                let elem = document.createElement("p");
+                                elem.appendChild(userNameElem);
+                                elem.appendChild(document.createTextNode(message.Content));
+
+                                elem.setAttribute("data-source", "signalR");
+
+                                chatroom.appendChild(elem);
+                            });
                         })
                         .catch(error => console.error('Ошибка:', error));
                 }
@@ -56,6 +138,18 @@
                 return {
                     messages,
                 };
+            },
+            methods: {
+                getUserName(userId) {
+                    let name = '';
+                    if (userId == store.state.messages.SenderId) {
+                        name = userName;
+                    }
+                    else {
+                        name = receiverName;
+                    }
+                    return name;
+                }
             }
         });
         messageDisplay.mount('#message-display');

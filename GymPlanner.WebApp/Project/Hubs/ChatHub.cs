@@ -22,15 +22,15 @@ namespace GymPlanner.WebUI.Hubs
             var claims = Context.User;
             await base.OnConnectedAsync();
         }
-        public async Task SendMessage(string senderId, string receiverId, string receiverName, string dialogId, string message)
+        public async Task SendMessage(int senderId, int receiverId, string receiverName, int dialogId, string message)
         {
             var newMessage = new Message
             {
-                UserIdFrom = int.Parse(senderId),
-                UserIdTo = int.Parse(receiverId),
+                UserIdFrom = senderId,
+                UserIdTo = receiverId,
                 Content = message,
                 Created = DateTime.Now,
-                DialogId = int.Parse(dialogId)
+                DialogId = dialogId
             };
             var senderName = Context.UserIdentifier;
             await _chatRepository.AddAsync(newMessage);

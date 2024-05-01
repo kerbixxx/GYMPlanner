@@ -43,16 +43,16 @@ namespace GymPlanner.WebUI.Controllers
             return View(dialogDtos);
         }
 
-        [Route("[Controller]/Messages/{dialogId}")]
-        public async Task<IActionResult> Messages([FromRoute]int dialogId)
+        [Route("[Controller]/Messages/{id}")]
+        public async Task<IActionResult> Messages([FromRoute]int id)
         {
             try
             {
-                var dialog = await _dialogRepository.GetAsync(dialogId);
+                var dialog = await _dialogRepository.GetAsync(id);
 
                 var messageDto = new MessagesDto()
                 {
-                    DialogId = dialogId,
+                    DialogId = id,
                     Messages = dialog.Messages
                 };
                 if (dialog.User.Email == User.Identity.Name)
@@ -72,9 +72,8 @@ namespace GymPlanner.WebUI.Controllers
                 var options = new JsonSerializerOptions
                 {
                     ReferenceHandler = ReferenceHandler.Preserve,
-                    // Optionally, you can set other options like PropertyNamingPolicy, etc.
                 };
-
+                messageDto.Messages.Reverse();
                 var json = JsonSerializer.Serialize(messageDto, options);
 
                 return Ok(json);
