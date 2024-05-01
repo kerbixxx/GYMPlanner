@@ -12,10 +12,8 @@ namespace GymPlanner.Infrastructure.Repositories.Chat
 {
     public class MessageRepository : Repository<Message>, IMessageRepository
     {
-        private readonly PlanDbContext _db;
         public MessageRepository(PlanDbContext db) : base(db)
         {
-            _db = db;
         }
 
         public async Task<List<Message>> GetMessagesFromDialogAsync(int dialogId)

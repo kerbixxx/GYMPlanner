@@ -7,10 +7,8 @@ namespace GymPlanner.Infrastructure.Repositories.Plan
 {
     public class PlanRepository : Repository<Domain.Entities.Plans.Plan>, IPlanRepository
     {
-        private readonly PlanDbContext _db;
         public PlanRepository(PlanDbContext db) : base(db)
         {
-            _db = db;
         }
 
         public override async Task<Domain.Entities.Plans.Plan> GetAsync(int id)

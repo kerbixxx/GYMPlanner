@@ -11,10 +11,8 @@ namespace GymPlanner.Infrastructure.Repositories.Plan
 {
     public class ExerciseRepository : Repository<Exercise>, IExerciseRepository
     {
-        private readonly PlanDbContext _db;
         public ExerciseRepository(PlanDbContext db) : base(db)
         {
-            _db = db;
         }
     }
 }

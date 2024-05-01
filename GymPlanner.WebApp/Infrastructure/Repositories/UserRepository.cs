@@ -12,10 +12,8 @@ namespace GymPlanner.Infrastructure.Repositories
 {
     public class UserRepository : Repository<User>, IUserRepository
     {
-        private readonly PlanDbContext _db;
         public UserRepository(PlanDbContext db) : base(db)
         {
-            _db = db;
         }
 
         public async Task<User> FindByNameAsync(string? name)

@@ -14,10 +14,8 @@ namespace GymPlanner.Infrastructure.Repositories.Plan
 {
     public class SubscriptionRepository : Repository<Subscription>, ISubscriptionRepository
     {
-        private readonly PlanDbContext _db;
         public SubscriptionRepository(PlanDbContext db) : base(db)
         {
-            _db = db;
         }
 
         public async Task<List<Subscription>> GetSubscriptionsOnPlanAsync(int id)

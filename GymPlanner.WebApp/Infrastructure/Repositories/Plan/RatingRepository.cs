@@ -12,10 +12,8 @@ namespace GymPlanner.Infrastructure.Repositories.Plan
 {
     public class RatingRepository : Repository<Rating>, IRatingRepository
     {
-        private readonly PlanDbContext _db;
         public RatingRepository(PlanDbContext db) : base(db)
         {
-            _db = db;
         }
 
         public async Task<List<Rating>> GetRatingsForPlan(int planId)

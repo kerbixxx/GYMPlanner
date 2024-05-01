@@ -13,10 +13,8 @@ namespace GymPlanner.Infrastructure.Repositories.Chat
 {
     public class DialogRepository : Repository<Dialog>, IDialogRepository
     {
-        private readonly PlanDbContext _db;
         public DialogRepository(PlanDbContext db) : base(db)
-        {
-            _db = db;
+        {   
         }
 
         public async Task<Dialog> GetDialogBetweenUsersAsync(int userId, int otherUserId)

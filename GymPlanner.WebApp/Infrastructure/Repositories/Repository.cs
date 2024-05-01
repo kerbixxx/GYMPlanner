@@ -9,7 +9,7 @@ namespace GymPlanner.Infrastructure.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly PlanDbContext _db;
+        internal readonly PlanDbContext _db;
         DbSet<T> _dbSet;
         public Repository(PlanDbContext db)
         {
