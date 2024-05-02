@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.SignalR;
 using GymPlanner.WebUI.Hubs;
 using Serilog;
 using System.Reflection;
-using AutoMapper;
 using GymPlanner.Application.Configurations;
 using System.Configuration;
+using GymPlanner.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +31,7 @@ builder.Services.AddSignalR(options =>
 {
     options.EnableDetailedErrors = true;
 });
+
 builder.Services.Configure<DefaultNamesOptions>(builder.Configuration.GetSection("DefaultNames"));
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 builder.Services.AddInfrastructureServices();

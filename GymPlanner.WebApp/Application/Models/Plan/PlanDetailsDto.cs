@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GymPlanner.Application.Models.Plan
 {
-    public class PlanDetailsDto
+    public class PlanDetailsDto 
     {
         public int PlanId { get; set; }
         public int UserId { get; set; }

@@ -11,7 +11,7 @@ namespace GymPlanner.Application.Interfaces.Services
 {
     public interface IExerciseService
     {
-        Task<int> AddExerciseToPlan(ExerciseDto dto);
+        Task<Exercise> AddExerciseToPlan(ExerciseDto dto);
         Task DeleteExerciseFromPlan(int id);
         Task UpdateAsync(Exercise obj);
     }

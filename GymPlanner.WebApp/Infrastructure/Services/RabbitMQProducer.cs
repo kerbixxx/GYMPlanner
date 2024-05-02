@@ -24,7 +24,6 @@ namespace GymPlanner.Infrastructure.Services
                 HostName = "localhost",
                 Port = 5673
             };
-
             _connection = _factory.CreateConnection();
         }
 

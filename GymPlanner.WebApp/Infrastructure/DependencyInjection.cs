@@ -30,7 +30,6 @@ namespace GymPlanner.Infrastructure
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
         {
             services.AddScoped<IRabbitMQProducer, RabbitMQProducer>();
-            services.AddTransient<IPlanService, PlanService>();
             return services;
         }
     }

@@ -10,7 +10,7 @@ namespace GymPlanner.Application.Interfaces.Services
 {
     public interface IFrequencyService
     {
-        Task<int> AddFrequencyToPlan(FrequencyDto dto);
+        Task<Frequency> AddFrequencyToPlan(FrequencyDto dto);
         Task DeleteFrequencyFromPlan(int id);
         Task UpdateAsync(Frequency obj);
     }

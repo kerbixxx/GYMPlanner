@@ -3,6 +3,7 @@ using GymPlanner.Application.Interfaces.Repositories.Plan;
 using GymPlanner.Application.Interfaces.Services;
 using GymPlanner.Application.Models.Plan;
 using GymPlanner.Domain.Entities.Plans;
+using Microsoft.Extensions.Options;
 
 namespace GymPlanner.Application.Services
 {
@@ -11,14 +12,14 @@ namespace GymPlanner.Application.Services
         private readonly IExerciseRepository _exerciseRepository;
         private readonly IPlanExerciseFrequencyRepository _pefRepository;
         private readonly DefaultNamesOptions _options;
-        public ExerciseService(IExerciseRepository exerciseRepository, IPlanExerciseFrequencyRepository pefRepository, DefaultNamesOptions options)
+        public ExerciseService(IExerciseRepository exerciseRepository, IPlanExerciseFrequencyRepository pefRepository, IOptions<DefaultNamesOptions> options)
         {
             _exerciseRepository = exerciseRepository;
             _pefRepository = pefRepository;
-            _options = options;
+            _options = options.Value;
         }
 
-        public async Task<int> AddExerciseToPlan(ExerciseDto dto)
+        public async Task<Exercise> AddExerciseToPlan(ExerciseDto dto)
         {
             Exercise exercise = new() { Name = dto.Name };
             await _exerciseRepository.AddAsync(exercise);
@@ -38,7 +39,7 @@ namespace GymPlanner.Application.Services
             {
                 await _pefRepository.AddAsync(pef);
             }
-            return exercise.Id;
+            return exercise;
         }
 
         public async Task DeleteExerciseFromPlan(int id)

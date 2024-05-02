@@ -1,8 +1,10 @@
-﻿using GymPlanner.Application.Configurations;
+﻿using AutoMapper;
+using GymPlanner.Application.Configurations;
 using GymPlanner.Application.Interfaces.Repositories.Plan;
 using GymPlanner.Application.Interfaces.Services;
 using GymPlanner.Application.Models.Plan;
 using GymPlanner.Domain.Entities.Plans;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,13 +23,15 @@ namespace GymPlanner.Application.Services
         private readonly IRatingService _ratingService;
         private readonly ISubscriptionService _subscriptionService;
         private readonly IExerciseService _exerciseService;
+        private readonly IMapper _mapper;
         public PlanService(IPlanRepository planRepo,
                            IPlanExerciseFrequencyRepository pefRepo,
                            IFrequencyService frequencyService,
                            IRatingService ratingService,
                            ISubscriptionService subscriptionService,
                            IExerciseService exerciseService,
-                           DefaultNamesOptions options)
+                           IOptions<DefaultNamesOptions> options,
+                           IMapper mapper)
         {
             _planRepo = planRepo;
             _pefRepo = pefRepo;
@@ -35,23 +39,23 @@ namespace GymPlanner.Application.Services
             _ratingService = ratingService;
             _subscriptionService = subscriptionService;
             _exerciseService = exerciseService;
-            _options = options;
+            _options = options.Value;
+            _mapper = mapper;
         }
-
-
         public async Task AddPlanAsync(Plan plan)
         {
             plan.CreatedAt = DateTime.Now;
             await _planRepo.AddAsync(plan);
-            var frequencyId = await _exerciseService.AddExerciseToPlan(new ExerciseDto() { Name = _options.DEFAULT_EXERCISE_NAME,PlanId = plan.Id});
-            var exerciseId = await _frequencyService.AddFrequencyToPlan(new FrequencyDto() { Name = _options.DEFAULT_FREQUENCY_NAME, PlanId = plan.Id });
+            var exercise = await _exerciseService.AddExerciseToPlan(new ExerciseDto() { Name = _options.DEFAULT_EXERCISE_NAME,PlanId = plan.Id});
+            var frequency = await _frequencyService.AddFrequencyToPlan(new FrequencyDto() { Name = _options.DEFAULT_FREQUENCY_NAME, PlanId = plan.Id });
             PlanExerciseFrequency pef = new()
             {
                 PlanId = plan.Id,
-                FrequencyId = frequencyId,
-                ExerciseId = exerciseId,
+                FrequencyId = frequency.Id,
+                ExerciseId = exercise.Id,
                 Description = _options.DEFAULT_DESCRIPTION
             };
+
             await _pefRepo.AddAsync(pef);
         }
 
@@ -80,16 +84,7 @@ namespace GymPlanner.Application.Services
             List<GetPlansOnIndexDto> plansDto = new();
             foreach(var plan in filteredPlans)
             {
-                var planDto = new GetPlansOnIndexDto()
-                {
-                    UserId = plan.UserId,
-                    PlanId = plan.Id,
-                    FullDescription = plan.FullDescription,
-                    MenuDescription = plan.MenuDescription,
-                    CreatedAt = plan.CreatedAt,
-                    Name = plan.Name,
-                    Tags = plan.TagsDb,
-                };
+                var planDto = _mapper.Map<GetPlansOnIndexDto>(plan);
                 planDto.AverageRating = await _ratingService.GetAverageRatingForPlan(plan.Id);
                 plansDto.Add(planDto);
             }
@@ -110,15 +105,7 @@ namespace GymPlanner.Application.Services
 
         public async Task UpdatePlanAsync(PlanEditDto planDto)
         {
-            var plan = new Plan()
-            {
-                Id = planDto.PlanId,
-                Name = planDto.Name,
-                UserId = planDto.UserId,
-                FullDescription = planDto.FullDescription,
-                MenuDescription = planDto.MenuDescription,
-                TagsDb = planDto.TagsString
-            };
+            var plan = _mapper.Map<Plan>(planDto);
             var trimmedTags = plan.Tags.Select(tag => tag.Trim()).ToArray();
             plan.Tags = trimmedTags;
             await _planRepo.UpdateAsync(plan);
@@ -146,31 +133,7 @@ namespace GymPlanner.Application.Services
         {
             var plan = await _planRepo.GetAsync(id);
             await CheckIfEmpty(plan);
-            var excfreqList = new List<ExerciseFrequencyDto>();
-            foreach (var pef in plan.planExersiseFrequencies)
-            {
-                var excfreq = new ExerciseFrequencyDto()
-                {
-                    Description = pef.Description,
-                    ExerciseId = pef.Exercise.Id,
-                    FrequencyId = pef.FrequencyId,
-                    Id = pef.Id
-                };
-                excfreqList.Add(excfreq);
-            }
-            var planDto = new PlanEditDto()
-            {
-                PlanId = plan.Id,
-                ExerciseFrequencies = excfreqList,
-                Name = plan.Name,
-                Exercises = plan.planExersiseFrequencies.Select(pef => pef.Exercise).Distinct().ToList(),
-                Frequencies = plan.planExersiseFrequencies.Select(pef => pef.Frequency).Distinct().ToList(),
-                UserId = plan.UserId,
-                MenuDescription = plan.MenuDescription,
-                FullDescription = plan.FullDescription,
-                CreatedAt = plan.CreatedAt,
-                TagsString = plan.TagsDb
-            };
+            var planDto = _mapper.Map<PlanEditDto>(plan);
             return planDto;
         }
 
@@ -178,15 +141,16 @@ namespace GymPlanner.Application.Services
         {
             if (plan.planExersiseFrequencies.Count() == 0)
             {
-                var frequencyId = await _exerciseService.AddExerciseToPlan(new ExerciseDto() { Name = _options.DEFAULT_EXERCISE_NAME, PlanId = plan.Id });
-                var exerciseId = await _frequencyService.AddFrequencyToPlan(new FrequencyDto() { Name = _options.DEFAULT_FREQUENCY_NAME, PlanId = plan.Id });
+                var exercise = await _exerciseService.AddExerciseToPlan(new ExerciseDto() { Name = _options.DEFAULT_EXERCISE_NAME, PlanId = plan.Id });
+                var frequency = await _frequencyService.AddFrequencyToPlan(new FrequencyDto() { Name = _options.DEFAULT_FREQUENCY_NAME, PlanId = plan.Id });
                 PlanExerciseFrequency pef = new()
                 {
                     PlanId = plan.Id,
-                    FrequencyId = frequencyId,
-                    ExerciseId = exerciseId,
+                    FrequencyId = frequency.Id,
+                    ExerciseId = exercise.Id,
                     Description = _options.DEFAULT_DESCRIPTION
                 };
+
                 await _pefRepo.AddAsync(pef);
             }
         }
@@ -194,33 +158,8 @@ namespace GymPlanner.Application.Services
         public async Task<PlanDetailsDto> GetPlanDetailsDtoAsync(int id, int userId)
         {
             var plan = await _planRepo.GetAsync(id);
-            var excfreqList = new List<ExerciseFrequencyDto>();
-            foreach (var pef in plan.planExersiseFrequencies)
-            {
-                var excfreq = new ExerciseFrequencyDto()
-                {
-                    Description = pef.Description,
-                    ExerciseId = pef.Exercise.Id,
-                    FrequencyId = pef.FrequencyId,
-                    Id = pef.Id
-                };
-                excfreqList.Add(excfreq);
-            }
-            var isSubbed = _subscriptionService.IsUserSubbedToPlan(userId, plan.Id);
-            var planDto = new PlanDetailsDto()
-            {
-                PlanId = plan.Id,
-                ExerciseFrequencies = excfreqList,
-                Name = plan.Name,
-                Exercises = plan.planExersiseFrequencies.Select(pef => pef.Exercise).Distinct().ToList(),
-                Frequencies = plan.planExersiseFrequencies.Select(pef => pef.Frequency).Distinct().ToList(),
-                UserId = plan.UserId,
-                MenuDescription = plan.MenuDescription,
-                FullDescription = plan.FullDescription,
-                CreatedAt = plan.CreatedAt,
-                TagsString = plan.TagsDb,
-                IsSubscribed = isSubbed
-            };
+            var planDto = _mapper.Map<PlanDetailsDto>(plan);
+            planDto.IsSubscribed = _subscriptionService.IsUserSubbedToPlan(userId, plan.Id);
             return planDto;
         }
     }
