@@ -30,5 +30,21 @@ namespace GymPlanner.WebUI.Controllers
         {
             return View();
         }
+        public IActionResult AboutUs()
+        {
+            return View();
+        }
+        public IActionResult PrivacyPolicy()
+        {
+            return View();
+        }
+        public IActionResult Disclaimer()
+        {
+            return View();
+        }
+        public IActionResult TermsAndConditions()
+        {
+            return View();
+        }
     }
 }
