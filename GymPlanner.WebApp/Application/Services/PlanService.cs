@@ -19,15 +19,13 @@ namespace GymPlanner.Application.Services
         private readonly IPlanExerciseFrequencyRepository _pefRepo;
         private readonly IFrequencyService _frequencyService;
         private readonly IRatingService _ratingService;
-        private readonly ISubscriptionRepository _subscribionRepository;
-        private readonly IRabbitMQProducer _rabbitMQProducer;
+        private readonly ISubscriptionService _subscriptionService;
         private readonly IExerciseService _exerciseService;
         public PlanService(IPlanRepository planRepo,
                            IPlanExerciseFrequencyRepository pefRepo,
                            IFrequencyService frequencyService,
                            IRatingService ratingService,
-                           ISubscriptionRepository subscribionRepository,
-                           IRabbitMQProducer rabbitMQProducer,
+                           ISubscriptionService subscriptionService,
                            IExerciseService exerciseService,
                            DefaultNamesOptions options)
         {
@@ -35,8 +33,7 @@ namespace GymPlanner.Application.Services
             _pefRepo = pefRepo;
             _frequencyService = frequencyService;
             _ratingService = ratingService;
-            _subscribionRepository = subscribionRepository;
-            _rabbitMQProducer = rabbitMQProducer;
+            _subscriptionService = subscriptionService;
             _exerciseService = exerciseService;
             _options = options;
         }
@@ -137,18 +134,7 @@ namespace GymPlanner.Application.Services
             {
                 await _frequencyService.UpdateAsync(frequency);
             }
-            await NotifyAllSubscribers(plan.Id);
-        }
-
-        private async Task NotifyAllSubscribers(int planId)
-        {
-            var allSubscribers = await _subscribionRepository.GetSubscriptionsOnPlanAsync(planId);
-            foreach (var subscriber in allSubscribers)
-            {
-                _rabbitMQProducer.NotifySubscribersAboutEdit(new MessageEditNotifier() { PlanName = subscriber.Plan.Name, SubscriberEmail = subscriber.User.Email});
-                
-            }
-            _rabbitMQProducer.Dispose();
+            await _subscriptionService.NotifyAllSubscribers(plan.Id);
         }
         public async Task DeletePlanAsync(int id)
         {
@@ -220,7 +206,7 @@ namespace GymPlanner.Application.Services
                 };
                 excfreqList.Add(excfreq);
             }
-            var isSubbed = _subscribionRepository.FirstOrDefault(p=>(p.PlanId == id) && (p.UserId == userId));
+            var isSubbed = _subscriptionService.IsUserSubbedToPlan(userId, plan.Id);
             var planDto = new PlanDetailsDto()
             {
                 PlanId = plan.Id,
@@ -233,7 +219,7 @@ namespace GymPlanner.Application.Services
                 FullDescription = plan.FullDescription,
                 CreatedAt = plan.CreatedAt,
                 TagsString = plan.TagsDb,
-                IsSubscribed = isSubbed!=null
+                IsSubscribed = isSubbed
             };
             return planDto;
         }
