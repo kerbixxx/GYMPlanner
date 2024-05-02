@@ -1,4 +1,5 @@
-﻿using GymPlanner.Application.Interfaces.Repositories.Plan;
+﻿using GymPlanner.Application.Configurations;
+using GymPlanner.Application.Interfaces.Repositories.Plan;
 using GymPlanner.Application.Interfaces.Services;
 using GymPlanner.Application.Models.Plan;
 using GymPlanner.Domain.Entities.Plans;
@@ -13,32 +14,31 @@ namespace GymPlanner.Application.Services
 {
     public class PlanService : IPlanService
     {
-        private const string DEFAULT_EXERCISE_NAME = "Упражнение 1";
-        private const string DEFAULT_FREQUENCY_NAME = "Частота 1";
-        private const string DEFAULT_DESCRIPTION = "0";
-
+        private readonly DefaultNamesOptions _options;
         private readonly IPlanRepository _planRepo;
         private readonly IPlanExerciseFrequencyRepository _pefRepo;
-        private readonly IExerciseRepository _exerciseRepo;
-        private readonly IFrequencyRepository _frequencyRepo;
+        private readonly IFrequencyService _frequencyService;
         private readonly IRatingService _ratingService;
         private readonly ISubscriptionRepository _subscribionRepository;
         private readonly IRabbitMQProducer _rabbitMQProducer;
+        private readonly IExerciseService _exerciseService;
         public PlanService(IPlanRepository planRepo,
                            IPlanExerciseFrequencyRepository pefRepo,
-                           IExerciseRepository exerciseRepository,
-                           IFrequencyRepository frequencyRepository,
+                           IFrequencyService frequencyService,
                            IRatingService ratingService,
                            ISubscriptionRepository subscribionRepository,
-                           IRabbitMQProducer rabbitMQProducer)
+                           IRabbitMQProducer rabbitMQProducer,
+                           IExerciseService exerciseService,
+                           DefaultNamesOptions options)
         {
             _planRepo = planRepo;
             _pefRepo = pefRepo;
-            _exerciseRepo = exerciseRepository;
-            _frequencyRepo = frequencyRepository;
+            _frequencyService = frequencyService;
             _ratingService = ratingService;
             _subscribionRepository = subscribionRepository;
             _rabbitMQProducer = rabbitMQProducer;
+            _exerciseService = exerciseService;
+            _options = options;
         }
 
 
@@ -46,22 +46,14 @@ namespace GymPlanner.Application.Services
         {
             plan.CreatedAt = DateTime.Now;
             await _planRepo.AddAsync(plan);
-            Exercise exercise = new()
-            {
-                Name = DEFAULT_EXERCISE_NAME
-            };
-            Frequency frequency = new()
-            {
-                Name = DEFAULT_FREQUENCY_NAME
-            };
-            await _exerciseRepo.AddAsync(exercise);
-            await _frequencyRepo.AddAsync(frequency);
+            var frequencyId = await _exerciseService.AddExerciseToPlan(new ExerciseDto() { Name = _options.DEFAULT_EXERCISE_NAME,PlanId = plan.Id});
+            var exerciseId = await _frequencyService.AddFrequencyToPlan(new FrequencyDto() { Name = _options.DEFAULT_FREQUENCY_NAME, PlanId = plan.Id });
             PlanExerciseFrequency pef = new()
             {
                 PlanId = plan.Id,
-                FrequencyId = frequency.Id,
-                ExerciseId = exercise.Id,
-                Description = DEFAULT_DESCRIPTION
+                FrequencyId = frequencyId,
+                ExerciseId = exerciseId,
+                Description = _options.DEFAULT_DESCRIPTION
             };
             await _pefRepo.AddAsync(pef);
         }
@@ -139,11 +131,11 @@ namespace GymPlanner.Application.Services
             }
             foreach (var excersise in planDto.Exercises)
             {
-                await _exerciseRepo.UpdateAsync(excersise);
+                await _exerciseService.UpdateAsync(excersise);
             }
             foreach (var frequency in planDto.Frequencies)
             {
-                await _frequencyRepo.UpdateAsync(frequency);
+                await _frequencyService.UpdateAsync(frequency);
             }
             await NotifyAllSubscribers(plan.Id);
         }
@@ -158,67 +150,10 @@ namespace GymPlanner.Application.Services
             }
             _rabbitMQProducer.Dispose();
         }
-
-        public async Task AddExerciseToPlan(ExerciseDto dto)
-        {
-            var plan = await _planRepo.GetAsync(dto.PlanId);
-            Exercise exercise = new() { Name = dto.Name };
-            await _exerciseRepo.AddAsync(exercise);
-            var pefList = new List<PlanExerciseFrequency>();
-            foreach (var freq in plan.planExersiseFrequencies.Select(p => p.FrequencyId).Distinct())
-            {
-                pefList.Add(new PlanExerciseFrequency()
-                {
-                    FrequencyId = freq,
-                    ExerciseId = exercise.Id,
-                    PlanId = plan.Id,
-                    Description = DEFAULT_DESCRIPTION
-                });
-            }
-            foreach (var pef in pefList)
-            {
-                await _pefRepo.AddAsync(pef);
-            }
-        }
-
-        public async Task AddFrequencyToPlan(FrequencyDto dto)
-        {
-            var plan = await _planRepo.GetAsync(dto.PlanId);
-            Frequency frequency = new() { Name = dto.Name };
-            await _frequencyRepo.AddAsync(frequency);
-            var pefList = new List<PlanExerciseFrequency>();
-            foreach (var exercise in plan.planExersiseFrequencies.Select(p => p.ExerciseId).Distinct())
-            {
-                pefList.Add(new PlanExerciseFrequency()
-                {
-                    FrequencyId = frequency.Id,
-                    ExerciseId = exercise,
-                    PlanId = plan.Id,
-                    Description = DEFAULT_DESCRIPTION
-                });
-            }
-            foreach (var pef in pefList)
-            {
-                await _pefRepo.AddAsync(pef);
-            }
-        }
-
         public async Task DeletePlanAsync(int id)
         {
             var plan = await _planRepo.GetAsync(id);
             await _planRepo.RemoveAsync(plan);
-        }
-
-        public async Task DeleteFrequencyFromPlan(int id)
-        {
-            var frequency = await _frequencyRepo.GetAsync(id);
-            await _frequencyRepo.RemoveAsync(frequency);
-        }
-
-        public async Task DeleteExerciseFromPlan(int id)
-        {
-            var exercise = await _exerciseRepo.GetAsync(id);
-            await _exerciseRepo.RemoveAsync(exercise);
         }
 
         public async Task<PlanEditDto> GetPlanEditDtoAsync(int id)
@@ -257,22 +192,14 @@ namespace GymPlanner.Application.Services
         {
             if (plan.planExersiseFrequencies.Count() == 0)
             {
-                Exercise exercise = new()
-                {
-                    Name = DEFAULT_EXERCISE_NAME
-                };
-                Frequency frequency = new()
-                {
-                    Name = DEFAULT_FREQUENCY_NAME
-                };
-                await _exerciseRepo.AddAsync(exercise);
-                await _frequencyRepo.AddAsync(frequency);
+                var frequencyId = await _exerciseService.AddExerciseToPlan(new ExerciseDto() { Name = _options.DEFAULT_EXERCISE_NAME, PlanId = plan.Id });
+                var exerciseId = await _frequencyService.AddFrequencyToPlan(new FrequencyDto() { Name = _options.DEFAULT_FREQUENCY_NAME, PlanId = plan.Id });
                 PlanExerciseFrequency pef = new()
                 {
                     PlanId = plan.Id,
-                    FrequencyId = frequency.Id,
-                    ExerciseId = exercise.Id,
-                    Description = DEFAULT_DESCRIPTION
+                    FrequencyId = frequencyId,
+                    ExerciseId = exerciseId,
+                    Description = _options.DEFAULT_DESCRIPTION
                 };
                 await _pefRepo.AddAsync(pef);
             }

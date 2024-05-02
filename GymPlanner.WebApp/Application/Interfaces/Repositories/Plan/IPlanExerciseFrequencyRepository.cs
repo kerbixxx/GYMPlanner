@@ -9,5 +9,6 @@ namespace GymPlanner.Application.Interfaces.Repositories.Plan
 {
     public interface IPlanExerciseFrequencyRepository : IRepository<PlanExerciseFrequency>
     {
+        Task<List<PlanExerciseFrequency>> GetByPlanId(int planId);
     }
 }

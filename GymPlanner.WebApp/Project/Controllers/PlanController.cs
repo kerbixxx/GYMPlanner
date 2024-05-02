@@ -18,13 +18,17 @@ namespace GymPlanner.WebUI.Controllers
         private readonly IPlanService _planService;
         private readonly IUserRepository _userRepo;
         private readonly IRatingService _ratingService;
+        private readonly IExerciseService _exerciseService;
+        private readonly IFrequencyService _frequencyService;
         private readonly ISubscriptionRepository _subscriptionRepository;
-        public PlanController(IPlanService planService, IUserRepository userRepo, IRatingService ratingService, ISubscriptionRepository subscribtionRepository)
+        public PlanController(IPlanService planService, IUserRepository userRepo, IRatingService ratingService, ISubscriptionRepository subscribtionRepository, IExerciseService exerciseService, IFrequencyService frequencyService)
         {
             _planService = planService;
             _userRepo = userRepo;
             _ratingService = ratingService;
             _subscriptionRepository = subscribtionRepository;
+            _exerciseService = exerciseService;
+            _frequencyService = frequencyService;
         }
         public IActionResult Index()
         {
@@ -83,7 +87,7 @@ namespace GymPlanner.WebUI.Controllers
         {
             try
             {
-                await _planService.AddExerciseToPlan(dto);
+                await _exerciseService.AddExerciseToPlan(dto);
             }
             catch(Exception ex)
             {
@@ -113,7 +117,7 @@ namespace GymPlanner.WebUI.Controllers
         {
             try
             {
-                await _planService.AddFrequencyToPlan(dto);
+                await _frequencyService.AddFrequencyToPlan(dto);
             }
             catch (Exception ex)
             {
@@ -148,14 +152,14 @@ namespace GymPlanner.WebUI.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteFrequency(int frequencyId)
         {
-            await _planService.DeleteFrequencyFromPlan(frequencyId);
+            await _frequencyService.DeleteFrequencyFromPlan(frequencyId);
             return Json(new { success = true });
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteExercise(int exerciseId)
         {
-            await _planService.DeleteExerciseFromPlan(exerciseId);
+            await _exerciseService.DeleteExerciseFromPlan(exerciseId);
             return Json(new { success = true});
         }
 
