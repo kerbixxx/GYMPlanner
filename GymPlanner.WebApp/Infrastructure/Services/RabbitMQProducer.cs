@@ -24,11 +24,22 @@ namespace GymPlanner.Infrastructure.Services
                 HostName = "localhost",
                 Port = 5673
             };
-            _connection = _factory.CreateConnection();
+            try
+            {
+                _connection = _factory.CreateConnection();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка подключения к брокеру сообщений: {ex.Message}");
+            }
         }
 
         public void NotifySubscribersAboutEdit(MessageEditNotifier message)
         {
+            if (_connection == null)
+            {
+                return;
+            }
             using (var channel = _connection.CreateModel())
             {
                 channel.QueueDeclare(queue: "EmailQueue",
@@ -46,6 +57,10 @@ namespace GymPlanner.Infrastructure.Services
         }
         public void SendMessageToRabbit<T>(T message)
         {
+            if (_connection == null)
+            {
+                return;
+            }
             using (var channel = _connection.CreateModel())
             {
                 channel.QueueDeclare(queue: "MyQueue",
@@ -63,6 +78,10 @@ namespace GymPlanner.Infrastructure.Services
         }
         public void Dispose()
         {
+            if (_connection == null)
+            {
+                return;
+            }
             _connection?.Dispose();
         }
 
