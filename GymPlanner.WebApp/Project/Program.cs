@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<PlanDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLExpress"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer"));
 });
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
