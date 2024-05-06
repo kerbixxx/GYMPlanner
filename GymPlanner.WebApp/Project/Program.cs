@@ -40,7 +40,10 @@ builder.Services.AddCustomServices();
 builder.Services.AddApplication();
 
 Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
+    .WriteTo
+    .MSSqlServer(
+    connectionString: builder.Configuration.GetConnectionString("Logging"),
+    sinkOptions:new Serilog.Sinks.MSSqlServer.MSSqlServerSinkOptions { TableName = "TableName"})
     .CreateLogger();
 
 var app = builder.Build();
