@@ -19,10 +19,12 @@ services:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       - ACCEPT_EULA="Y"
-      - SA_PASSWORD="MyPass@word"
+      - SA_PASSWORD=123456@A
       - MSSQL_PID=Express
     ports:
       - "1439:1433"
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   rabbitmq:
     image: rabbitmq:3.13-management
@@ -34,7 +36,12 @@ services:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       - ACCEPT_EULA="Y"
-      - SA_PASSWORD="MyPass@word"
+      - SA_PASSWORD=123456@A
       - MSSQL_PID=Express
     ports:
       - "1440:1433"
+    volumes:
+      - mysql_data2:/var/lib/mysql
+volumes:
+  mysql_data:
+  mysql_data2:  
