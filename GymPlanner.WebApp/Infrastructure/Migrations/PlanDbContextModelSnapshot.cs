@@ -42,7 +42,7 @@ namespace GymPlanner.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Dialogs");
+                    b.ToTable("Dialogs", (string)null);
                 });
 
             modelBuilder.Entity("GymPlanner.Domain.Entities.Chat.Message", b =>
@@ -74,7 +74,7 @@ namespace GymPlanner.Infrastructure.Migrations
 
                     b.HasIndex("DialogId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Messages", (string)null);
                 });
 
             modelBuilder.Entity("GymPlanner.Domain.Entities.Identity.Role", b =>
@@ -91,7 +91,7 @@ namespace GymPlanner.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
@@ -129,7 +129,7 @@ namespace GymPlanner.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new
@@ -156,7 +156,7 @@ namespace GymPlanner.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Exercises");
+                    b.ToTable("Exercises", (string)null);
 
                     b.HasData(
                         new
@@ -181,7 +181,7 @@ namespace GymPlanner.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Frequencies");
+                    b.ToTable("Frequencies", (string)null);
 
                     b.HasData(
                         new
@@ -224,7 +224,7 @@ namespace GymPlanner.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Plans");
+                    b.ToTable("Plans", (string)null);
 
                     b.HasData(
                         new
@@ -263,7 +263,7 @@ namespace GymPlanner.Infrastructure.Migrations
 
                     b.HasIndex("FrequencyId");
 
-                    b.ToTable("PlanExerciseFrequencies");
+                    b.ToTable("PlanExerciseFrequencies", (string)null);
 
                     b.HasData(
                         new
@@ -291,7 +291,7 @@ namespace GymPlanner.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Ratings");
+                    b.ToTable("Ratings", (string)null);
                 });
 
             modelBuilder.Entity("GymPlanner.Domain.Entities.Plans.Subscription", b =>
@@ -306,7 +306,7 @@ namespace GymPlanner.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Subscriptions");
+                    b.ToTable("Subscriptions", (string)null);
                 });
 
             modelBuilder.Entity("GymPlanner.Domain.Entities.Chat.Dialog", b =>

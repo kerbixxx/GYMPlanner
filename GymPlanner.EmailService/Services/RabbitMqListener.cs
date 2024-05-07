@@ -1,4 +1,5 @@
 ﻿using EmailService.DTOs;
+using EmailService.Interfaces;
 using Hangfire.Common;
 using MailKit.Net.Smtp;
 using MimeKit;
@@ -13,6 +14,12 @@ namespace EmailService.Services
     {
         private IConnection _connection;
         private IModel _channel;
+        private readonly IEmailSender _sender;
+
+        public RabbitMqListener(IEmailSender sender)
+        {
+            _sender = sender;
+        }
 
         public void Consume()
         {
@@ -29,7 +36,7 @@ namespace EmailService.Services
                     var body = ea.Body.ToArray();
                     var json = Encoding.UTF8.GetString(body);
                     message = JsonConvert.DeserializeObject<MessagePlanEditConsumer>(json);
-                    SendEmail(message.SubscriberEmail, message.PlanName);
+                    _sender.SendEmail(message.SubscriberEmail, message.PlanName);
                 };
 
                 _channel.BasicConsume(queue: "EmailQueue", autoAck: true, consumer: consumer);

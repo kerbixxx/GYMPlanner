@@ -14,11 +14,6 @@ namespace EmailService.Controllers
     [ApiController]
     public class EmailController : ControllerBase
     {
-        private readonly RabbitMqListener _rabbitMqListener;
-        public EmailController()
-        {
-            _rabbitMqListener = new RabbitMqListener();
-        }
         [HttpGet]
         public IActionResult Email()
         {
