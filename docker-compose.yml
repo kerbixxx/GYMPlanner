@@ -20,10 +20,12 @@ services:
       - ACCEPT_EULA="Y"
       - SA_PASSWORD=123456@A
       - MSSQL_PID=Express
+      - MSSQL_TCP_PORT=1433
     ports:
       - "1439:1433"
     volumes:
-      - mysql_data:/var/lib/mysql
+        - sql_data:/var/opt/mssql
+    container_name: sqlserver
 
   rabbitmq:
     image: rabbitmq:3.13-management
@@ -31,4 +33,4 @@ services:
       - "5673:5672"
       - "15673:15672"
 volumes:
-  mysql_data:
+  sql_data:

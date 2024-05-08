@@ -10,14 +10,6 @@ WORKDIR /src
 COPY . .
 
 RUN dotnet restore "GymPlanner.WebApp/Project/GymPlanner.WebUI.csproj"
-RUN dotnet restore "GymPlanner.WebApp/Infrastructure/GymPlanner.Infrastructure.csproj"
-
-RUN dotnet tool install --global dotnet-ef --version 7.0.17
-ENV PATH="$PATH:/root/.dotnet/tools"
-
-RUN dotnet ef migrations add InitialCreate --project GymPlanner.WebApp/Infrastructure/GymPlanner.Infrastructure.csproj
-
-RUN dotnet ef database update --project GymPlanner.WebApp/Infrastructure/GymPlanner.Infrastructure.csproj
 
 WORKDIR "/src/GymPlanner.WebApp/Project"
 RUN dotnet build "GymPlanner.WebUI.csproj" -c Release -o /app/build
@@ -26,6 +18,9 @@ FROM build AS publish
 RUN dotnet publish "GymPlanner.WebUI.csproj" -c Release -o /app/publish
 
 FROM base AS final
+WORKDIR /migration
+COPY --from=migration /app/migration .
+
 WORKDIR /app
 COPY --from=publish /app/publish .
 
